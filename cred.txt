@@ -1,0 +1,9 @@
+https://dagshub.com/aryanshah2109/FraudDetect.mlflow
+
+import dagshub
+dagshub.init(repo_owner='aryanshah2109', repo_name='FraudDetect', mlflow=True)
+
+import mlflow
+with mlflow.start_run():
+  mlflow.log_param('parameter name', 'value')
+  mlflow.log_metric('metric name', 1)

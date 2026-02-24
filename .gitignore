@@ -87,3 +87,8 @@ target/
 
 # Mypy cache
 .mypy_cache/
+
+
+# Experimentations and notebooks
+/experimentations
+/notebooks

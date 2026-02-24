@@ -1,0 +1,59 @@
+project:
+  name: FraudDetect
+  version: 1.0.0
+
+seed: 42
+
+data_path:
+  raw_data: data/raw/data.csv
+  processed_data: data/raw/processed_data.csv
+  interim: data/raw/interim_data.csv
+
+features:
+  drop_cols:
+    - step
+    - nameOrig
+    - nameDest
+  cat_cols:
+    - type
+  num_cols:
+    - amount
+    - oldbalanceOrg
+    - newbalanceOrg
+    - newbalanceDest
+    - isFraud
+    - isFlaggedFraud
+
+training:
+  test_size: 0.2
+  cross_validation: 3
+
+model:
+  name: xgboost
+  parameters:
+    n_estimators: 263
+    max_depth: 11
+    learning_rate: 0.08155447589149051
+    subsample: 0.5564405658710594
+    colsample_bytree: 0.5639188659465246
+    scale_pos_weight: 7.452034376962025
+
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1_score
+    - roc_auc
+    - pr_auc
+
+mlflow:
+  mlflow_tracking_uri : https://dagshub.com/aryanshah2109/FraudDetect.mlflow/#/
+  owner_name: aryanshah2109
+  repo_name: FraudDetect
+
+logging:
+  level: INFO
+  format: "%(asctime)s - %(levelname)s - %(message)s"
+  save_logs: true 
+  
