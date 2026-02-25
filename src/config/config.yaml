@@ -2,12 +2,22 @@ project:
   name: FraudDetect
   version: 1.0.0
 
+config_path:
+  config_path: config/config.yaml
+
 seed: 42
 
 data_path:
   raw_data: data/raw/data.csv
   processed_data: data/raw/processed_data.csv
   interim: data/raw/interim_data.csv
+
+
+logging:
+  level: DEBUG
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  save_logs: true 
+  log_dir: logs
 
 features:
   drop_cols:
@@ -52,8 +62,4 @@ mlflow:
   owner_name: aryanshah2109
   repo_name: FraudDetect
 
-logging:
-  level: INFO
-  format: "%(asctime)s - %(levelname)s - %(message)s"
-  save_logs: true 
   
