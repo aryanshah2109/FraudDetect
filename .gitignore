@@ -90,7 +90,13 @@ target/
 /experimentations
 /notebooks
 
+# data files
+data/raw/*.csv
+data/raw/*.parquet
+data/processed/*
+data/interim/*
+
 # dvc specific content
-/data
+
 /models
 /reports
