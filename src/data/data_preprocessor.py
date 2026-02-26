@@ -1,9 +1,7 @@
-import os
-
 import pandas as pd
 
 from src.logger import logging
-from src.path_constants import PROCESSED_DATA_PATH
+from src.path_constants import PROCESSED_TRAIN_DATA_PATH, PROCESSED_TEST_DATA_PATH
 from src.config import config_loader
 
 from src.pipelines.data_preprocessing_pipeline_generator import DataPreprocessingPipelineGenerator
@@ -66,55 +64,42 @@ class DataPreprocessor:
             logging.error(f"Error while handling categorical and numerical values: {e}")
             raise
 
-    def preprocess_train_data(self, X: pd.DataFrame):
-        """
-        Main method that merges all preprocessing functions
-        """
-        try:
-            logging.info("Performing preprocessing on features")
-
-            X_processed = self.fit_transform(X)
-
-            return X_processed
-        
-        except Exception as e:
-            logging.error(f"Error while preprocessing features: {e}")
-            raise
     
-    def preprocess_test_data(self, X: pd.DataFrame):
+    
+    def save_preprocessed_train_data(self, X_train:pd.DataFrame, y_train:pd.Series):
         """
-        Main method that merges all preprocessing functions
-        """
-        try:
-            logging.info("Performing preprocessing on features")
-
-            X_processed = self.transform(X)
-
-            return X_processed
-        
-        except Exception as e:
-            logging.error(f"Error while preprocessing features: {e}")
-            raise
-
-
-    def save_preprocessed_data(self, X_train:pd.DataFrame, X_test:pd.DataFrame, y_train:pd.Series, y_test:pd.Series):
-        """
-        Method to save preprocessed features into data folder
+        Method to save preprocessed train data
         """
         try:
 
-            logging.info("Saving preprocessed data to csv file")
+            logging.info("Saving preprocessed train data to csv file")
 
             train_data = pd.concat([X_train, y_train])
-            test_data = pd.concat([X_test, y_test])
-            full_data = pd.concat([train_data, test_data], axis=0)
-            full_data = full_data.reset_index(drop=True)
-            full_data.to_csv(PROCESSED_DATA_PATH)
+            
+            train_data.to_csv(PROCESSED_TRAIN_DATA_PATH)
 
-            logging.info("Successfully saved preprocessed data to csv file")
+            logging.info("Successfully saved preprocessed train data to csv file")
         
         except Exception as e:
-            logging.error(f"Error while saving preprocesed data: {e}")
+            logging.error(f"Error while saving preprocesed train data: {e}")
+            raise
+
+    def save_preprocessed_test_data(self, X_test:pd.DataFrame, y_test:pd.Series):
+        """
+        Method to save preprocessed train data
+        """
+        try:
+
+            logging.info("Saving preprocessed test data to csv file")
+
+            test_data = pd.concat([X_test, y_test])
+            
+            test_data.to_csv(PROCESSED_TEST_DATA_PATH)
+
+            logging.info("Successfully saved preprocessed test data to csv file")
+        
+        except Exception as e:
+            logging.error(f"Error while saving preprocesed test data: {e}")
             raise
 
     

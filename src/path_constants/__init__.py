@@ -12,5 +12,10 @@ MAX_LOG_SIZE = 5 * 1024 * 1024  # 5 MB
 
 # Data path
 RAW_DATA_PATH = ROOT_DIR / "data" / "raw" / "data.csv"
-INTERIM_DATA_PATH = ROOT_DIR / "data" / "interim" / "inter.csv"
-PROCESSED_DATA_PATH = ROOT_DIR / "data" / "processed" / "processed.csv"
+
+INTERIM_TRAIN_DATA_PATH = ROOT_DIR / "data" / "interim" / "train.csv"
+INTERIM_TEST_DATA_PATH = ROOT_DIR / "data" / "interim" / "test.csv"
+
+PROCESSED_TRAIN_DATA_PATH = ROOT_DIR / "data" / "processed" / "train.csv"
+PROCESSED_TEST_DATA_PATH = ROOT_DIR / "data" / "processed" / "test.csv"
+

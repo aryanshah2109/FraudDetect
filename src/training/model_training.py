@@ -1,0 +1,78 @@
+import os
+import pandas as pd
+
+from src.config import config_loader
+from src.logger import logging
+from src.path_constants import *
+
+from xgboost import XGBClassifier
+
+class ModelTrainer:
+
+    def __init__(self):
+        config = config_loader.load_config()
+
+        self.n_estimators = config["model"]["parameters"]["n_estimators"]
+        self.max_depth = config["model"]["parameters"]["max_depth"]
+        self.learning_rate = config["model"]["parameters"]["learning_rate"]
+        self.subsample = config["model"]["parameters"]["subsample"]
+        self.colsample_bytree = config["model"]["parameters"]["colsample_bytree"]
+        self.scale_pos_weight = config["model"]["parameters"]["scale_pos_weight"]
+        self.random_state = config["seed"]
+        self.objective = config["model"]["parameters"]["objective"]
+        self.eval_metric = config["model"]["parameters"]["eval_metric"]
+        self.tree_method = config["model"]["parameters"]["tree_method"]
+        self.device = config["model"]["parameters"]["device"]
+        self.predictor = config["model"]["parameters"]["predictor"]
+        self.n_jobs = config["model"]["parameters"]["n_jobs"]
+        
+
+
+        self.model = XGBClassifier(
+            n_estimators = self.n_estimators,
+            max_depth = self.max_depth,
+            learning_rate = self.learning_rate, 
+            subsample = self.subsample,
+            colsample_bytree = self.colsample_bytree,
+            scale_pos_weight = self.scale_pos_weight,
+            random_state = self.random_state,
+            objective = self.objective,
+            eval_metric = self.eval_metric,
+            tree_method = self.tree_method,
+            device = self.device,
+            predictor = self.predictor,
+            n_jobs = self.n_jobs
+        )
+
+
+    def fit(self, X_train: pd.DataFrame, y_train: pd.DataFrame):
+        try:
+            logging.info("Initiating training on given model")            
+
+            self.model.fit(X_train, y_train)
+
+            logging.info("Successful training on given model")            
+
+        except Exception as e:
+            logging.error(f"Error while training model: {e}")
+            raise
+
+    def predict(self, X_test: pd.DataFrame) -> pd.Series:
+        """
+        Predicts on test data and returns
+        """
+
+        try:
+            logging.info("Initiating testing on given test data")            
+
+            y_pred = self.model.predict(X_test)
+
+            logging.info("Successful testing on given test data")            
+
+            return y_pred            
+
+        except Exception as e:
+            logging.error(f"Error while testing on test data: {e}")
+            raise
+
+

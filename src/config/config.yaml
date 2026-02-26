@@ -39,15 +39,13 @@ model:
     subsample: 0.5564405658710594
     colsample_bytree: 0.5639188659465246
     scale_pos_weight: 7.452034376962025
+    objective: binary:logistic
+    eval_metric : logloss
+    tree_method: hist
+    device: cuda
+    predictor: gpu_predictor
+    n_jobs: 1
 
-evaluation:
-  metrics:
-    - accuracy
-    - precision
-    - recall
-    - f1_score
-    - roc_auc
-    - pr_auc
 
 mlflow:
   mlflow_tracking_uri : https://dagshub.com/aryanshah2109/FraudDetect.mlflow/#/
