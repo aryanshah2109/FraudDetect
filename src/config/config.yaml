@@ -2,16 +2,7 @@ project:
   name: FraudDetect
   version: 1.0.0
 
-config_path:
-  config_path: config/config.yaml
-
 seed: 42
-
-data_path:
-  raw_data: data/raw/data.csv
-  processed_data: data/raw/processed_data.csv
-  interim: data/raw/interim_data.csv
-
 
 logging:
   level: DEBUG
@@ -29,14 +20,15 @@ features:
   num_cols:
     - amount
     - oldbalanceOrg
-    - newbalanceOrg
+    - newbalanceOrig
     - newbalanceDest
-    - isFraud
     - isFlaggedFraud
+  target_column_name: isFraud
 
 training:
   test_size: 0.2
   cross_validation: 3
+  stratify: true
 
 model:
   name: xgboost

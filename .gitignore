@@ -93,7 +93,7 @@ target/
 # data files
 data/raw/*.csv
 data/raw/*.parquet
-data/processed/*
+data/processed/*.csv
 data/interim/*
 
 # dvc specific content
