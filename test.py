@@ -1,8 +1,5 @@
-import os
-import pandas as pd
-
 from src.data.data_preprocessor import DataPreprocessor
-from src.data.data_reader import DataLoader
+from src.data.data_reader import DataReader
 from src.config import config_loader
 from src.logger import logging
 
@@ -20,9 +17,9 @@ class TestPipeline:
         try:
             logging.info("Initiating pipeline testing.")
 
-            data = DataLoader().load_data()
+            data = DataReader().load_data()
 
-            X_train, X_test, y_train, y_test = DataLoader().data_train_test_split(
+            X_train, X_test, y_train, y_test = DataReader().data_train_test_split(
                 data,
                 target_column_name = self.target_column_name,
                 test_size = self.test_size,

@@ -94,9 +94,9 @@ target/
 data/raw/*.csv
 data/raw/*.parquet
 data/processed/*.csv
-data/interim/*
+data/interim/*.csv
 
 # dvc specific content
-
+/artifact
 /models
 /reports

@@ -11,9 +11,7 @@ from src.pipelines.data_preprocessing_pipeline_generator import DataPreprocessin
 
 class DataPreprocessor:
     """
-    Preprocesses data to check:
-        1) Missing data rows
-        2) Checks outliers
+    Preprocesses data and transform into trainable data.
     """
 
     def __init__(self):
@@ -118,3 +116,5 @@ class DataPreprocessor:
         except Exception as e:
             logging.error(f"Error while saving preprocesed data: {e}")
             raise
+
+    

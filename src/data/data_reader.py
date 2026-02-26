@@ -8,7 +8,7 @@ from src.logger import logging
 from src.path_constants import RAW_DATA_PATH
 
 
-class DataLoader:
+class DataReader:
     """
     Data loader loads data file from disk and also performs train test split if needed
     """
