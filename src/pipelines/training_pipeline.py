@@ -1,128 +1,93 @@
 import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
 
 from src.config import config_loader
 from src.data.data_reader import DataReader
 from src.data.data_preprocessor import DataPreprocessor
 from src.training.model_training import ModelTrainer
+from src.evaluation.metrics import CalculateMetrics
 from src.logger import logging
 
+
 class TrainingPipeline:
-    """
-    The entire end-to-end training pipeline from data reading to model evaluation and inference
-    """
 
     def __init__(self):
         self.config = config_loader.load_config()
-        self.preprocesser = DataPreprocessor()
+        self.data_reader = DataReader()
+        self.preprocessor = DataPreprocessor()
         self.model = ModelTrainer()
+        self.metrics_object = CalculateMetrics()
 
-    def start_data_ingestion(self):
-        """
-        Phase 1 of training pipeline: Reads data from disk
-        """
+    def split_data(self, data):
+        logging.info("Splitting data into train and test")
+        return self.data_reader.data_train_test_split(
+            data=data,
+            target_column_name=self.config["features"]["target_column_name"],
+            test_size=self.config["training"]["test_size"],
+            random_state=self.config["seed"],
+            stratify=self.config["training"]["stratify"]
+        )
 
-        data = DataReader().load_data()
-        return data
+    def split_train_validation(self, X_train, y_train):
+        logging.info("Splitting train data into train and validation")
+        return train_test_split(
+            X_train,
+            y_train,
+            test_size=self.config["training"]["test_size"],
+            random_state=self.config["seed"],
+            stratify=y_train
+        )
 
-    def split_data_into_train_test(self, data: pd.DataFrame):
-        """
-        Phase 2 of training pipeline: Splits data into train and test sets
-        """
+    def preprocess_data(self, X_train, X_val, X_test):
+        logging.info("Preprocessing train, validation and test data")
+        X_train_t = self.preprocessor.fit_transform(X_train)
+        X_val_t = self.preprocessor.transform(X_val)
+        X_test_t = self.preprocessor.transform(X_test)
+        return X_train_t, X_val_t, X_test_t
 
-        try:
+    def train_model(self, X_train, y_train):
+        logging.info("Training model")
+        self.model.fit(X_train, y_train)
 
-            target_column_name = self.config["features"]["target_column_name"]
-            random_state = self.config["seed"]
-            test_size = self.config["training"]["test_size"]
-            stratify = self.config["training"]["stratify"]
+    def tune_threshold(self, y_val, y_val_prob):
+        logging.info("Tuning threshold using validation data")
+        return self.metrics_object.calculate_thresholds(y_val, y_val_prob)
 
-            X_train, X_test, y_train, y_test = DataReader().data_train_test_split(
-                data = data,
-                target_column_name = target_column_name,
-                test_size = test_size,
-                random_state = random_state,    
-                stratify = stratify
-            )        
-
-            DataReader().save_train_test_data(X_train, X_test, y_train, y_test)
-
-            return X_train, X_test, y_train, y_test
-
-            
-        
-        except Exception as e:
-            logging.log(f"Error while splitting data into train and test set: {e}")
-            raise
-
-    def preprocessing_train_data(self, X_train: pd.DataFrame, X_test: pd.DataFrame):
-
-        try:
-            X_train_transformed = self.preprocesser.fit_transform(X_train)
-            X_test_transformed = self.preprocesser.transform(X_test)
-
-            return X_train_transformed, X_test_transformed         
-        
-        except Exception as e:
-            logging.error(f"Error while preprocessing data: {e}")
-            raise
-        
-    def train_model(self, X_train: pd.DataFrame, y_train: pd.DataFrame):
-
-        try:
-            self.model.fit(X_train, y_train)
-                   
-        
-        except Exception as e:
-            logging.error(f"Error while training model: {e}")
-            raise
-        
-    def test_model(self, X_test: pd.DataFrame):
-
-        try:
-            y_pred = self.model.predict(X_test)
-            return y_pred
-                   
-        
-        except Exception as e:
-            logging.error(f"Error while predicting on test data: {e}")
-            raise
-
+    def evaluate_model(self, y_test, y_test_prob, threshold):
+        logging.info("Evaluating model on test data")
+        y_pred = (y_test_prob >= threshold).astype(int)
+        self.metrics_object.evaluate(y_test, y_pred, y_test_prob)
 
     def run_pipeline(self):
-
         try:
-            logging.info("Running pipeline.")
+            logging.info("Running training pipeline")
 
-            logging.debug("Data Ingestion")
-            data = self.start_data_ingestion()
-            
-            logging.debug("Train Test Split")
-            X_train, X_test, y_train, y_test = self.split_data_into_train_test(data)
-            
-            logging.debug("Data Preprocessing")
-            X_train_transformed, X_test_transformed = self.preprocessing_train_data(X_train, X_test)
+            data = self.data_reader.load_data()
 
-            logging.debug("Save final train and test data")    
-            self.preprocesser.save_preprocessed_train_data(X_train_transformed, y_train)
-            self.preprocesser.save_preprocessed_test_data(X_test_transformed, y_test)
+            X_train, X_test, y_train, y_test = self.split_data(data)
 
-            logging.debug("Model Training")
-            self.train_model(X_train_transformed, y_train)
+            X_train, X_val, y_train, y_val = self.split_train_validation(X_train, y_train)
 
-            logging.debug("Model Testing on Test Data")
-            y_pred = self.test_model(X_test)
+            X_train_t, X_val_t, X_test_t = self.preprocess_data(X_train, X_val, X_test)
 
-            logging.debug("Evaluation Metrics")
-            
-        
+            self.preprocessor.save_preprocessed_train_data(X_train_t, y_train)
+            self.preprocessor.save_preprocessed_test_data(X_test_t, y_test)
+
+            self.train_model(X_train_t, y_train)
+
+            y_val_prob = self.model.predict_probability(X_val_t)
+
+            best_threshold = self.tune_threshold(y_val, y_val_prob)
+
+            logging.info(f"Best threshold selected: {best_threshold}")
+
+            y_test_prob = self.model.predict_probability(X_test_t)
+
+            self.evaluate_model(y_test, y_test_prob, best_threshold)
+
+            logging.info("Pipeline completed successfully")
+
         except Exception as e:
-            logging.error(f"Error occured while running pipeline: {e}")
+            logging.error(f"Error occurred while running pipeline: {e}")
             raise
-
-
-
-
-
-            
-
-

@@ -71,7 +71,7 @@ class DataPreprocessingPipelineGenerator:
             preprocessor = ColumnTransformer(transformers = [
                 ("numerical", numerical_pipeline, self.numerical_columns),
                 ("categorical", categorical_pipeline, self.categorical_columns)
-            ], remainder="passthrough")
+            ], remainder="drop")
 
             return preprocessor
         

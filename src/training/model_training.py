@@ -59,7 +59,7 @@ class ModelTrainer:
 
     def predict(self, X_test: pd.DataFrame) -> pd.Series:
         """
-        Predicts on test data and returns
+        Predicts on test data and returns pandas Series object of prediction values
         """
 
         try:
@@ -73,6 +73,24 @@ class ModelTrainer:
 
         except Exception as e:
             logging.error(f"Error while testing on test data: {e}")
+            raise
+
+    def predict_probability(self, X_test: pd.DataFrame) -> pd.Series:
+        """
+        Predicts on test data and returns
+        """
+
+        try:
+            logging.info("Initiating predicting probabilties on given test data")            
+
+            y_probability = self.model.predict_proba(X_test)[:, 1]
+
+            logging.info("Successful in predicting probabilties on given test data")            
+
+            return y_probability            
+
+        except Exception as e:
+            logging.error(f"Error while predicting probabilties on test data: {e}")
             raise
 
 
