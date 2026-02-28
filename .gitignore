@@ -97,6 +97,6 @@ data/processed/*.csv
 data/interim/*.csv
 
 # dvc specific content
-/artifact
+/artifacts
 /models
 /reports
