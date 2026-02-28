@@ -26,6 +26,7 @@ def configure_logger():
     """
 
     try:
+
         logging.info("Creating and setting up logger object.")
         # make logging directory
         os.makedirs(LOG_DIR, exist_ok=True)

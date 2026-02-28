@@ -1,12 +1,12 @@
 import os
 from typing import Tuple
-
+import joblib
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from src.logger import logging
 from src.path_constants import RAW_DATA_PATH, INTERIM_TRAIN_DATA_PATH, INTERIM_TEST_DATA_PATH
-
+from src.utils.artifacts_setup import ArtifactsSetup
 
 class DataReader:
     """
@@ -17,6 +17,8 @@ class DataReader:
         self.data_path = RAW_DATA_PATH
         self.interim_train_path = INTERIM_TRAIN_DATA_PATH
         self.interim_test_path = INTERIM_TEST_DATA_PATH
+        self.artifacts_object = ArtifactsSetup()
+        self.artifacts_path = self.artifacts_object.get_artifact_dir_name()
 
         if not os.path.exists(self.data_path):
             raise FileNotFoundError(f"Data not found at path {RAW_DATA_PATH}")
@@ -47,20 +49,22 @@ class DataReader:
         """
 
         try:
-            logging.info("Save train and test interim data")
+            logging.info("Save train and test interim data folder and artifacts")
 
             train_raw = pd.concat([X_train, y_train], axis=1)   # Merge X and y train data into single train file
             test_raw = pd.concat([X_test, y_test], axis=1)    # Merge X and y test data into single test file
 
             train_raw.to_csv(self.interim_train_path)
             test_raw.to_csv(self.interim_test_path)
-        
+            
+            self.artifacts_object.save_csv_artifact(train_raw, "train_raw")
+            self.artifacts_object.save_csv_artifact(test_raw, "test_raw")
+            
         except Exception as e:
-            logging.error(f"Could not save train test interim data due to error {e}")
+            logging.error(f"Could not save train test interim data to interim folder and artifacts due to error {e}")
             raise
 
         return 
-    
 
     def data_train_test_split(
             self,

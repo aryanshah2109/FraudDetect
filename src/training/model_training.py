@@ -4,6 +4,7 @@ import pandas as pd
 from src.config import config_loader
 from src.logger import logging
 from src.path_constants import *
+from src.utils.artifacts_setup import ArtifactsSetup
 
 from xgboost import XGBClassifier
 
@@ -11,6 +12,8 @@ class ModelTrainer:
 
     def __init__(self):
         config = config_loader.load_config()
+        self.artifacts_object = ArtifactsSetup()
+        self.artifacts_path = self.artifacts_object.get_artifact_dir_name()
 
         self.n_estimators = config["model"]["parameters"]["n_estimators"]
         self.max_depth = config["model"]["parameters"]["max_depth"]
@@ -92,5 +95,50 @@ class ModelTrainer:
         except Exception as e:
             logging.error(f"Error while predicting probabilties on test data: {e}")
             raise
+
+    def get_params(self):
+        """
+        Returns parameters of model used during training
+        """
+
+        try:
+            logging.debug("Fetching parameters used during training")
+            self.params = self.model.get_params()
+            return self.params
+        
+        except Exception as e:
+            logging.error(f"Could not fetch parameters: {e}")
+            raise
+
+
+    def get_model(self):
+        """
+        Returns model created during training
+        """
+
+        try:
+            logging.debug("Fetching model created during training")
+            return self.model
+        
+        except Exception as e:
+            logging.error(f"Could not fetch model: {e}")
+            raise
+
+    def save_model(self):
+        try:
+            logging.info("Saving model as artifact")
+            self.artifacts_object.save_model(self.model, "xgboost_model.pkl")
+        
+        except Exception as e:
+            logging.error("Could not save model as artifact")
+
+    def save_params(self):
+        try:
+            logging.info("Saving model as artifact")
+            self.artifacts_object.save_json(self.params, "params.json")
+        
+        except Exception as e:
+            logging.error("Could not save model as artifact")
+
 
 
