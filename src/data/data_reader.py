@@ -88,7 +88,7 @@ class DataReader:
             X = data.drop(columns = target_column_name)
             y = data[target_column_name]
 
-            logging.debug("Stratifing target column if needed to maintain class proportion")
+            logging.debug("Stratifying target column if needed to maintain class proportion")
             stratify_column = y if stratify else None
 
             X_train, X_test, y_train, y_test = train_test_split(

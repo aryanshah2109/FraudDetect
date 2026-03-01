@@ -10,6 +10,7 @@ from src.utils.artifacts_setup import ArtifactsSetup
 class DataPreprocessor:
 
     def __init__(self, artifacts_setup: ArtifactsSetup):
+        logging.debug("Initializing data preprocessor")
         self.preprocessing_pipeline = DataPreprocessingPipelineGenerator().generate_pipeline()
         config = config_loader.load_config()
         self.numerical_columns = config["features"]["num_cols"]
@@ -19,7 +20,7 @@ class DataPreprocessor:
 
     def fit_transform(self, X: pd.DataFrame):
         try:
-            logging.info("Fitting and transforming training data")
+            logging.info("Fitting preprocessing pipeline on training data")
             X_transformed = self.preprocessing_pipeline.fit_transform(X)
             X_column_names = self.preprocessing_pipeline.get_feature_names_out()
 
@@ -29,14 +30,14 @@ class DataPreprocessor:
                 index=X.index
             )
 
+            logging.debug(f"Training data shape after transformation: {df.shape}")
             return df.astype(float)
         except Exception as e:
-            logging.error(f"Error during fit_transform: {e}")
+            logging.error(f"Error during preprocessing fit_transform: {e}")
             raise
 
     def transform(self, X: pd.DataFrame):
         try:
-            logging.info("Transforming data")
             X_transformed = self.preprocessing_pipeline.transform(X)
             X_column_names = self.preprocessing_pipeline.get_feature_names_out()
 
@@ -48,7 +49,7 @@ class DataPreprocessor:
 
             return df.astype(float)
         except Exception as e:
-            logging.error(f"Error during transform: {e}")
+            logging.error(f"Error during preprocessing transform: {e}")
             raise
 
     def save_preprocessed_train_data(self, X_train: pd.DataFrame, y_train: pd.Series):

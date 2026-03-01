@@ -78,22 +78,25 @@ class ModelTrainer:
             logging.error(f"Error while testing on test data: {e}")
             raise
 
-    def predict_probability(self, X_test: pd.DataFrame) -> pd.Series:
+    def predict_probability(self, X: pd.DataFrame, dataset: str = "test") -> pd.Series:
         """
-        Predicts on test data and returns
+        Computes prediction probabilities for the given dataset
+        
+        Args:
+            X: Feature data
+            dataset: Dataset identifier ('validation', 'test', etc.) for logging
+        
+        Returns:
+            Probability predictions for positive class
         """
-
         try:
-            logging.info("Initiating predicting probabilties on given test data")            
-
-            y_probability = self.model.predict_proba(X_test)[:, 1]
-
-            logging.info("Successful in predicting probabilties on given test data")            
-
+            logging.debug(f"Computing probability predictions for {dataset} set (shape: {X.shape})")
+            y_probability = self.model.predict_proba(X)[:, 1]
+            logging.debug(f"Probability predictions computed for {dataset} set")
             return y_probability            
 
         except Exception as e:
-            logging.error(f"Error while predicting probabilties on test data: {e}")
+            logging.error(f"Error computing probability predictions for {dataset} set: {e}")
             raise
 
     def get_params(self):
@@ -126,19 +129,23 @@ class ModelTrainer:
 
     def save_model(self):
         try:
-            logging.info("Saving model as artifact")
+            logging.debug("Saving trained model to artifacts")
             self.artifacts_setup.save_model(self.model, "xgboost_model.pkl")
+            logging.debug("Model saved successfully")
         
         except Exception as e:
-            logging.error("Could not save model as artifact")
+            logging.error(f"Failed to save model artifact: {e}")
+            raise
 
     def save_params(self):
         try:
-            logging.info("Saving model as artifact")
+            logging.debug("Saving model parameters to artifacts")
             self.artifacts_setup.save_json(self.params, "params.json")
+            logging.debug("Model parameters saved successfully")
         
         except Exception as e:
-            logging.error("Could not save model as artifact")
+            logging.error(f"Failed to save model parameters: {e}")
+            raise
 
 
 
