@@ -13,6 +13,7 @@ from src.evaluation.metrics import CalculateMetrics
 from src.logger import logging
 from src.utils.mlflow_setup import MLFlowSetup
 from src.utils.artifacts_setup import ArtifactsSetup
+from src.model.model_picker import ModelPicker
 
 class TrainingPipeline:
 
@@ -27,7 +28,9 @@ class TrainingPipeline:
         self.model = ModelTrainer(self.artifacts_setup)
         self.metrics_object = CalculateMetrics(self.artifacts_setup)
         self.mlflow_object = MLFlowSetup(self.artifacts_setup)
-    
+        
+        metric = self.config["metrics"]["model_picker_metric"]
+        self.model_picker_object = ModelPicker(self.artifacts_setup, metric)
 
     def split_data(self, data):
         logging.info("Splitting data into train and test")
@@ -178,6 +181,12 @@ class TrainingPipeline:
             logging.info(f"F1 Score: {clean_metrics.get('f1', 'N/A'):.4f}")
             logging.info(f"ROC AUC: {clean_metrics.get('roc_auc', 'N/A'):.4f}")
             logging.info(f"PR AUC: {clean_metrics.get('pr_auc', 'N/A'):.4f}")
+
+            # Picking best model
+            logging.info("\n[STAGE 7] Picking Best Model")
+            self.model_picker_object.pick_best_model()
+            
+
             logging.info(f"Total Pipeline Time: {pipeline_elapsed_time:.2f} seconds")
             logging.info("TRAINING PIPELINE COMPLETED SUCCESSFULLY")
 

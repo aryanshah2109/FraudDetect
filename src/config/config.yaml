@@ -49,6 +49,7 @@ model:
 
 metrics:
   precision_limit: 0.70
+  model_picker_metric: recall
 
 mlflow:
   mlflow_tracking_uri: https://dagshub.com/aryanshah2109/FraudDetect.mlflow  
