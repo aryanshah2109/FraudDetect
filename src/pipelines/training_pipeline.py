@@ -17,13 +17,16 @@ class TrainingPipeline:
 
     def __init__(self):
         self.config = config_loader.load_config()
-        self.data_reader = DataReader()
-        self.preprocessor = DataPreprocessor()
-        self.model = ModelTrainer()
-        self.metrics_object = CalculateMetrics()
-        self.mlflow_object = MLFlowSetup()
-        self.artifacts_object = ArtifactsSetup()
-        self.artifacts_path = self.artifacts_object.get_artifact_dir_name()
+
+        self.artifacts_setup = ArtifactsSetup()
+        self.artifacts_path = self.artifacts_setup.artifact_path
+
+        self.data_reader = DataReader(self.artifacts_setup)
+        self.preprocessor = DataPreprocessor(self.artifacts_setup)
+        self.model = ModelTrainer(self.artifacts_setup)
+        self.metrics_object = CalculateMetrics(self.artifacts_setup)
+        self.mlflow_object = MLFlowSetup(self.artifacts_setup)
+    
 
     def split_data(self, data):
         logging.info("Splitting data into train and test")
@@ -64,7 +67,8 @@ class TrainingPipeline:
         logging.info("Evaluating model on test data")
         y_pred = (y_test_prob >= threshold).astype(int)
         metrics = self.metrics_object.evaluate(y_test, y_pred, y_test_prob)
-        self.metrics_object.save_metrics()
+        metrics["threshold"] = float(threshold)
+        self.metrics_object.save_metrics_plots(y_test, y_pred, y_test_prob)
         return metrics
 
     def run_pipeline(self):
@@ -110,7 +114,9 @@ class TrainingPipeline:
                 for k, v in metrics.items():
                     if isinstance(v, (int, float)):
                         clean_metrics[k] = float(v)
-
+                
+                self.mlflow_object.log_params({"decision_threshold": float(best_threshold)})
+                self.mlflow_object.log_artifacts(self.artifacts_setup.artifacts_plots_path)
                 self.mlflow_object.log_model(self.model.get_model())
                 self.mlflow_object.log_params(params)
                 self.mlflow_object.log_metrics(clean_metrics)

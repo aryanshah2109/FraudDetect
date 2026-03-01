@@ -1,5 +1,6 @@
 import pandas as pd
 import joblib
+from pathlib import Path
 from src.logger import logging
 from src.path_constants import PROCESSED_TRAIN_DATA_PATH, PROCESSED_TEST_DATA_PATH
 from src.config import config_loader
@@ -8,13 +9,13 @@ from src.utils.artifacts_setup import ArtifactsSetup
 
 class DataPreprocessor:
 
-    def __init__(self):
+    def __init__(self, artifacts_setup: ArtifactsSetup):
         self.preprocessing_pipeline = DataPreprocessingPipelineGenerator().generate_pipeline()
         config = config_loader.load_config()
         self.numerical_columns = config["features"]["num_cols"]
         self.categorical_columns = config["features"]["cat_cols"]
-        self.artifacts_object = ArtifactsSetup()
-        self.artifacts_path = self.artifacts_object.get_artifact_dir_name()
+        self.artifacts_setup = artifacts_setup
+        self.artifacts_path = self.artifacts_setup.artifact_path
 
     def fit_transform(self, X: pd.DataFrame):
         try:
@@ -71,7 +72,7 @@ class DataPreprocessor:
     def save_preprocessor_pipeline(self):
         try:
             logging.info("Saving preprocessor pipeline as artifact")
-            self.artifacts_object.save_pipeline(self.preprocessing_pipeline, "preprocessor.pkl")
+            self.artifacts_setup.save_pipeline(self.preprocessing_pipeline, "preprocessor")
         
         except Exception as e:
-            logging.error("Could not save preprocessor pipeline as artifact")
+            logging.error(f"Could not save preprocessor pipeline as artifact: {e}")

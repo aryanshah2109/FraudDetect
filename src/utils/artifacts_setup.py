@@ -17,25 +17,21 @@ class ArtifactsSetup:
         config = config_loader.load_config()
 
         self.model_name = config["model"]["name"]
-
-    def get_artifact_dir_name(self):
-        """
-        Fetches artifact directory name based on timestamp and model name
-        """
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         self.artifact_path: Path = (
             Path("artifacts") 
             / self.model_name
-            / timestamp
+            / self.timestamp
         )
 
         self.artifact_path.mkdir(parents=True, exist_ok=True)
 
         logging.info(f"Artifacts directory created at {self.artifact_path}")
 
-        return self.artifact_path
+        self.artifacts_plots_path = self.artifact_path / "plots"
+        self.artifacts_plots_path.mkdir(parents=True, exist_ok=True)
+
     
     def save_pipeline(self, pipeline, filename):
         try:

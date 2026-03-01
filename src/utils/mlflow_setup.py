@@ -1,8 +1,9 @@
 import mlflow
 from datetime import datetime
-
+from pathlib import Path
 from src.config import config_loader
 from src.logger import logging
+from src.utils.artifacts_setup import ArtifactsSetup
 
 from dotenv import load_dotenv
 import os
@@ -15,8 +16,11 @@ class MLFlowSetup:
     """
 
 
-    def __init__(self):
+    def __init__(self, artifacts_setup: ArtifactsSetup):
         config = config_loader.load_config()
+
+        self.artifacts_setup = artifacts_setup
+        self.artifacts_path = self.artifacts_setup.artifact_path
 
         self.model_name = config["model"]["name"]
 
@@ -27,8 +31,8 @@ class MLFlowSetup:
         mlflow.set_experiment(self.experiment_name)
 
     def get_run_name(self):
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        return f"{self.model_name}_{timestamp}"
+        run_name = f"{self.model_name}_{self.artifacts_setup.timestamp}"
+        return run_name
 
 
     def start_run(self, run_name: str):

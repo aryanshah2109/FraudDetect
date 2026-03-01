@@ -47,6 +47,9 @@ model:
     n_jobs: 1
 
 
+metrics:
+  precision_limit: 0.70
+
 mlflow:
   mlflow_tracking_uri: https://dagshub.com/aryanshah2109/FraudDetect.mlflow  
   experiment_name: Main_Experiment

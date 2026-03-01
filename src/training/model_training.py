@@ -10,10 +10,10 @@ from xgboost import XGBClassifier
 
 class ModelTrainer:
 
-    def __init__(self):
+    def __init__(self, artifacts_setup: ArtifactsSetup):
         config = config_loader.load_config()
-        self.artifacts_object = ArtifactsSetup()
-        self.artifacts_path = self.artifacts_object.get_artifact_dir_name()
+        self.artifacts_setup = artifacts_setup
+        self.artifacts_path = self.artifacts_setup.artifact_path
 
         self.n_estimators = config["model"]["parameters"]["n_estimators"]
         self.max_depth = config["model"]["parameters"]["max_depth"]
@@ -127,7 +127,7 @@ class ModelTrainer:
     def save_model(self):
         try:
             logging.info("Saving model as artifact")
-            self.artifacts_object.save_model(self.model, "xgboost_model.pkl")
+            self.artifacts_setup.save_model(self.model, "xgboost_model.pkl")
         
         except Exception as e:
             logging.error("Could not save model as artifact")
@@ -135,7 +135,7 @@ class ModelTrainer:
     def save_params(self):
         try:
             logging.info("Saving model as artifact")
-            self.artifacts_object.save_json(self.params, "params.json")
+            self.artifacts_setup.save_json(self.params, "params.json")
         
         except Exception as e:
             logging.error("Could not save model as artifact")
