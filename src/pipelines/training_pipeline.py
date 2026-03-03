@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 import numpy as np
 import joblib
@@ -15,6 +16,7 @@ from src.utils.mlflow_setup import MLFlowSetup
 from src.utils.artifacts_setup import ArtifactsSetup
 from src.model.model_picker import ModelPicker
 
+
 class TrainingPipeline:
 
     def __init__(self):
@@ -28,9 +30,11 @@ class TrainingPipeline:
         self.model = ModelTrainer(self.artifacts_setup)
         self.metrics_object = CalculateMetrics(self.artifacts_setup)
         self.mlflow_object = MLFlowSetup(self.artifacts_setup)
-        
+
         metric = self.config["metrics"]["model_picker_metric"]
         self.model_picker_object = ModelPicker(self.artifacts_setup, metric)
+
+        self.schema_version = self.config["schema"]["version"]
 
     def split_data(self, data):
         logging.info("Splitting data into train and test")
@@ -54,44 +58,62 @@ class TrainingPipeline:
 
     def preprocess_data(self, X_train, X_val, X_test):
         logging.info("Preprocessing train, validation and test data")
+
         X_train_t = self.preprocessor.fit_transform(X_train)
         logging.debug(f"Training data transformed: {X_train_t.shape}")
-        
+
         X_val_t = self.preprocessor.transform(X_val)
         logging.debug(f"Validation data transformed: {X_val_t.shape}")
-        
+
         X_test_t = self.preprocessor.transform(X_test)
         logging.debug(f"Test data transformed: {X_test_t.shape}")
-        
+
         return X_train_t, X_val_t, X_test_t
-    
+
     def train_model(self, X_train, y_train):
         start_time = time.time()
         logging.info("Training model started")
+
         self.model.fit(X_train, y_train)
+
         elapsed_time = time.time() - start_time
         logging.info(f"Model training completed in {elapsed_time:.2f} seconds")
 
     def tune_threshold(self, y_val, y_val_prob):
         logging.info("Threshold tuning: calculating optimal threshold from validation set")
+
         threshold = self.metrics_object.calculate_thresholds(y_val, y_val_prob)
         logging.info(f"Threshold selected from validation set: {threshold:.6f}")
-        
-        # Compute validation metrics for selected threshold
+
         y_val_pred = (y_val_prob >= threshold).astype(int)
-        val_metrics = self.metrics_object.evaluate(y_val, y_val_pred, y_val_prob, dataset="validation")
-        
+        self.metrics_object.evaluate(
+            y_val,
+            y_val_pred,
+            y_val_prob,
+            dataset="validation"
+        )
+
         return threshold
 
-    def evaluate_model(self, y_test, y_test_prob, threshold) -> dict:
+    def evaluate_model(self, y_test, y_test_prob, threshold):
         start_time = time.time()
         logging.info("Evaluating model on test set")
+
         y_pred = (y_test_prob >= threshold).astype(int)
-        metrics = self.metrics_object.evaluate(y_test, y_pred, y_test_prob, dataset="test")
-        logging.debug("Generating evaluation plots")
+
+        metrics = self.metrics_object.evaluate(
+            y_test,
+            y_pred,
+            y_test_prob,
+            threshold=threshold,
+            dataset="test"
+        )
+
         self.metrics_object.save_metrics_plots(y_test, y_pred, y_test_prob)
+
         elapsed_time = time.time() - start_time
         logging.debug(f"Model evaluation completed in {elapsed_time:.2f} seconds")
+
         return metrics
 
     def run_pipeline(self):
@@ -99,81 +121,99 @@ class TrainingPipeline:
             pipeline_start_time = time.time()
             logging.info("TRAINING PIPELINE STARTED")
 
-            # Data Loading
+            # STAGE 1: Data Loading
             logging.info("\n[STAGE 1] Data Loading")
             data = self.data_reader.load_data()
             logging.debug(f"Raw data shape: {data.shape}")
 
-            # Data Splitting
+            # STAGE 2: Data Splitting
             logging.info("\n[STAGE 2] Data Splitting")
             X_train, X_test, y_train, y_test = self.split_data(data)
-            logging.debug(f"Train set: {X_train.shape}, Test set: {X_test.shape}")
 
-            X_train, X_val, y_train, y_val = self.split_train_validation(X_train, y_train)
-            logging.debug(f"Train set: {X_train.shape}, Validation set: {X_val.shape}, Test set: {X_test.shape}")
+            X_train, X_val, y_train, y_val = self.split_train_validation(
+                X_train, y_train
+            )
 
-            # Data Preprocessing
+            # STAGE 3: Data Preprocessing
             logging.info("\n[STAGE 3] Data Preprocessing")
-            X_train_t, X_val_t, X_test_t = self.preprocess_data(X_train, X_val, X_test)
-            
-            logging.debug("Saving preprocessed datasets and preprocessing pipeline")
+            X_train_t, X_val_t, X_test_t = self.preprocess_data(
+                X_train, X_val, X_test
+            )
+
             self.preprocessor.save_preprocessed_train_data(X_train_t, y_train)
             self.preprocessor.save_preprocessed_test_data(X_test_t, y_test)
             self.preprocessor.save_preprocessor_pipeline()
 
-            # Model Training
+            # STAGE 4: Model Training
             logging.info("\n[STAGE 4] Model Training")
             self.train_model(X_train_t, y_train)
 
-            # Validation: Predict probabilities for threshold tuning
+            # STAGE 5: Validation & Threshold Tuning
             logging.info("\n[STAGE 5] Validation & Threshold Tuning")
-            logging.debug("Computing validation predictions for threshold selection")
-            y_val_prob = self.model.predict_probability(X_val_t, dataset="validation")
+            y_val_prob = self.model.predict_probability(
+                X_val_t,
+                dataset="validation"
+            )
 
             run_name = self.mlflow_object.get_run_name()
 
             with self.mlflow_object.start_run(run_name):
-                # Threshold tuning on validation set
+
                 best_threshold = self.tune_threshold(y_val, y_val_prob)
 
-                # Test: Predict probabilities (only once)
+                # STAGE 6: Test Evaluation
                 logging.info("\n[STAGE 6] Model Evaluation on Test Set")
-                logging.debug("Computing test predictions")
-                y_test_prob = self.model.predict_probability(X_test_t, dataset="test")
+                y_test_prob = self.model.predict_probability(
+                    X_test_t,
+                    dataset="test"
+                )
 
-                # Get model parameters once
-                logging.debug("Extracting model parameters")
                 params = self.model.get_params()
 
-                # Save model and parameters
-                logging.info("Saving model and parameters as artifacts")
                 self.model.save_model()
                 self.model.save_params()
 
-                # Evaluate on test set
-                metrics = self.evaluate_model(y_test, y_test_prob, best_threshold)
+                metrics = self.evaluate_model(
+                    y_test,
+                    y_test_prob,
+                    best_threshold
+                )
 
-                # Clean metrics for MLflow (remove non-numeric types)
-                clean_metrics = {}
+                # Inject schema version
+                metrics["schema_version"] = self.schema_version
+
+                # Convert numpy types to native python types
+                serializable_metrics = {}
                 for k, v in metrics.items():
-                    if isinstance(v, (int, float)):
-                        clean_metrics[k] = float(v)
+                    if isinstance(v, (np.floating, np.integer)):
+                        serializable_metrics[k] = v.item()
+                    else:
+                        serializable_metrics[k] = v
 
-                # Log to MLflow in correct order: params -> metrics -> artifacts -> model
+                # Overwrite metrics.json in current run folder
+                metrics_path = self.artifacts_setup.artifact_path / "metrics.json"
+                with open(metrics_path, "w") as f:
+                    json.dump(serializable_metrics, f, indent=4)
+
+                # Prepare clean metrics for MLflow
+                clean_metrics = {
+                    k: float(v)
+                    for k, v in serializable_metrics.items()
+                    if isinstance(v, (int, float))
+                }
+
+                # MLflow logging
                 logging.info("\n[STAGE 7] MLFlow Logging")
-                logging.debug("Logging model parameters to MLFlow")
                 self.mlflow_object.log_params(params)
-                
-                logging.debug("Logging evaluation metrics to MLFlow")
                 self.mlflow_object.log_metrics(clean_metrics)
-                
-                logging.debug("Logging evaluation plots to MLFlow")
-                self.mlflow_object.log_artifacts(self.artifacts_setup.artifacts_plots_path)
-                
+                self.mlflow_object.log_artifacts(
+                    self.artifacts_setup.artifacts_plots_path
+                )
                 self.mlflow_object.log_model(self.model.get_model())
 
             # Final Summary
             pipeline_elapsed_time = time.time() - pipeline_start_time
+
             logging.info("PIPELINE SUMMARY")
             logging.info(f"Threshold: {best_threshold:.6f}")
             logging.info(f"Precision: {clean_metrics.get('precision', 'N/A'):.4f}")
@@ -182,10 +222,9 @@ class TrainingPipeline:
             logging.info(f"ROC AUC: {clean_metrics.get('roc_auc', 'N/A'):.4f}")
             logging.info(f"PR AUC: {clean_metrics.get('pr_auc', 'N/A'):.4f}")
 
-            # Picking best model
-            logging.info("\n[STAGE 7] Picking Best Model")
+            # STAGE 8: Model Picking
+            logging.info("\n[STAGE 8] Picking Best Model")
             self.model_picker_object.pick_best_model()
-            
 
             logging.info(f"Total Pipeline Time: {pipeline_elapsed_time:.2f} seconds")
             logging.info("TRAINING PIPELINE COMPLETED SUCCESSFULLY")

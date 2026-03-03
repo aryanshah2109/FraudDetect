@@ -4,6 +4,9 @@ project:
 
 seed: 42
 
+schema:
+  version: v2
+
 logging:
   level: DEBUG
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -15,6 +18,7 @@ features:
     - step
     - nameOrig
     - nameDest
+    - isFlaggedFraud
   cat_cols:
     - type
   num_cols:
@@ -22,7 +26,9 @@ features:
     - oldbalanceOrg
     - newbalanceOrig
     - newbalanceDest
-    - isFlaggedFraud
+    - oldbalanceDest
+    - errorBalanceOrig
+    - errorBalanceDest
   target_column_name: isFraud
 
 training:
@@ -48,12 +54,16 @@ model:
 
 
 metrics:
-  precision_limit: 0.70
-  model_picker_metric: recall
+  precision_limit: 0.65
+  model_picker_metric: pr_auc
 
 mlflow:
   mlflow_tracking_uri: https://dagshub.com/aryanshah2109/FraudDetect.mlflow  
   experiment_name: Main_Experiment
 
+inference:
+  best_model_path: models/best_model.pkl
+  best_metrics_path: models/best_metrics.json
+  best_preprocessor_path: models/best_preprocessor.pkl
 
   

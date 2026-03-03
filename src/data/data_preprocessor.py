@@ -14,15 +14,25 @@ class DataPreprocessor:
         self.preprocessing_pipeline = DataPreprocessingPipelineGenerator().generate_pipeline()
         config = config_loader.load_config()
         self.numerical_columns = config["features"]["num_cols"]
-        self.categorical_columns = config["features"]["cat_cols"]
+        self.categorical_columns = config["features"]["cat_cols"]        
+        self.drop_unimportant_columns = config["features"]["drop_cols"]
+
         self.artifacts_setup = artifacts_setup
         self.artifacts_path = self.artifacts_setup.artifact_path
 
     def fit_transform(self, X: pd.DataFrame):
         try:
             logging.info("Fitting preprocessing pipeline on training data")
+            
+            logging.debug("Dropping unimportant columns from X")
+            X = X.drop(columns=self.drop_unimportant_columns, errors="ignore")
+
             X_transformed = self.preprocessing_pipeline.fit_transform(X)
-            X_column_names = self.preprocessing_pipeline.get_feature_names_out()
+            X_column_names = (
+                self.preprocessing_pipeline
+                    .named_steps["column_transform"]
+                    .get_feature_names_out()
+            )
 
             df =  pd.DataFrame(
                 X_transformed,
@@ -38,8 +48,15 @@ class DataPreprocessor:
 
     def transform(self, X: pd.DataFrame):
         try:
+            logging.debug("Dropping unimportant columns from X")
+            X = X.drop(columns=self.drop_unimportant_columns, errors="ignore")
+
             X_transformed = self.preprocessing_pipeline.transform(X)
-            X_column_names = self.preprocessing_pipeline.get_feature_names_out()
+            X_column_names = (
+                self.preprocessing_pipeline
+                    .named_steps["column_transform"]
+                    .get_feature_names_out()
+            )
 
             df =  pd.DataFrame(
                 X_transformed,

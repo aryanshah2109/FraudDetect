@@ -59,7 +59,7 @@ class CalculateMetrics:
             raise
 
 
-    def evaluate(self, y_test: pd.Series, y_pred: pd.Series, y_probabilities: pd.Series, dataset: str = "test"):
+    def evaluate(self, y_test: pd.Series, y_pred: pd.Series, y_probabilities: pd.Series, threshold: float = None, dataset: str = "test"):
         try:
             accuracy = accuracy_score(y_test, y_pred)
             precision = precision_score(y_test, y_pred)
@@ -76,6 +76,8 @@ class CalculateMetrics:
             logging.info(f"[{dataset.upper()}] F1 Score: {f1:.6f}")
             logging.info(f"[{dataset.upper()}] ROC AUC: {roc_auc:.6f}")
             logging.info(f"[{dataset.upper()}] PR AUC: {pr_auc:.6f}")
+            if threshold is not None:
+                logging.info(f"[{dataset.upper()}] Threshold: {threshold:.6f}")
             logging.debug(f"[{dataset.upper()}] Confusion Matrix:\n{cm}")
 
             self.metrics = {
@@ -87,6 +89,9 @@ class CalculateMetrics:
                 "pr_auc" : pr_auc,
                 "confusion_matrix" : cm.tolist()
             }
+            
+            if threshold is not None:
+                self.metrics["threshold"] = threshold
 
             return self.metrics
 

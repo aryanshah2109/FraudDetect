@@ -3,6 +3,7 @@ import pandas as pd
 
 from src.config import config_loader
 from src.logger import logging
+from src.pipelines.feature_engineering_pipeline import BalanceErrorFeatureGenerator
 
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
@@ -72,8 +73,13 @@ class DataPreprocessingPipelineGenerator:
                 ("numerical", numerical_pipeline, self.numerical_columns),
                 ("categorical", categorical_pipeline, self.categorical_columns)
             ], remainder="drop")
+            
+            full_pipeline = Pipeline(steps=[
+                ("feature_engineering", BalanceErrorFeatureGenerator()),
+                ("column_transform", preprocessor)
+            ])
 
-            return preprocessor
+            return full_pipeline
         
         except Exception as e:
             logging.error(f"Could not generate column transformer due to error: {e}")

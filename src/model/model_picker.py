@@ -19,23 +19,27 @@ class ModelPicker:
 
     def pick_best_model(self):
         try:
-            logging.info("Picking best model and storing in models/ folder")        
+            logging.info("Picking best model and storing in models/ folder")
             logging.info(f"Metric chosen: {self.metric}")
+
+            config = config_loader.load_config()
+            current_schema_version = config["schema"]["version"]
+
             artifacts_dir = Path("artifacts") / self.model_name
 
             best_score = float("-inf")
             best_model_path = None
+            best_preprocessor_path = None
+            best_metrics_path = None
             best_run_folder = None
 
             for run_name in artifacts_dir.iterdir():
                 if run_name.is_dir():
                     metrics_path = run_name / "metrics.json"
 
-                    # Skip if file doesn't exist
                     if not metrics_path.exists():
                         continue
 
-                    # Skip empty files
                     if metrics_path.stat().st_size == 0:
                         logging.warning(f"Skipping empty metrics file: {metrics_path}")
                         continue
@@ -47,32 +51,64 @@ class ModelPicker:
                         logging.warning(f"Skipping corrupted metrics file: {metrics_path}")
                         continue
 
-                    score = metrics.get(self.metric)
+                    run_schema_version = metrics.get("schema_version")
+
+                    # Skip incompatible schema versions
+                    if run_schema_version != current_schema_version:
+                        logging.info(
+                            f"Skipping run {run_name.name} due to schema mismatch "
+                            f"(run: {run_schema_version}, current: {current_schema_version})"
+                        )
+                        continue
+
+                    recall = metrics.get("recall")
+                    pr_auc = metrics.get("pr_auc")
+
+                    if recall is None or pr_auc is None:
+                        continue
+
+                    # enforce minimum recall
+                    if recall < 0.70:
+                        continue
+
+                    score = pr_auc
 
                     if score is not None and score > best_score:
                         best_score = score
                         best_model_path = run_name / f"{self.model_name}_model.pkl"
+                        best_preprocessor_path = run_name / "preprocessor.pkl"
+                        best_metrics_path = run_name / "metrics.json"
                         best_run_folder = run_name
 
             if best_model_path is None:
-                logging.error("No models found to pick from")
-                raise
+                raise ValueError(
+                    f"No compatible models found for schema version {current_schema_version}"
+                )
 
             logging.info(f"Best run name: {best_run_folder}")
             logging.info(f"Best metric on which model is chosen: {best_score}")
 
             model = joblib.load(best_model_path)
+            preprocessor = joblib.load(best_preprocessor_path)
+            with open(best_metrics_path, "r") as f:
+                metrics = json.load(f)
 
             final_model_path = Path("models") / "best_model.pkl"
+            final_preprocessor_path = Path("models") / "best_preprocessor.pkl"
+            final_metrics_path = Path("models") / "best_metrics.json"
+
             final_model_path.parent.mkdir(parents=True, exist_ok=True)
 
             joblib.dump(model, final_model_path)
+            joblib.dump(preprocessor, final_preprocessor_path)
+
+            with open(final_metrics_path, "w") as f:
+                json.dump(metrics, f, indent=4)
 
             logging.info(f"Best model stored at {final_model_path}")
-
-            logging.info(f"Best model chosen and stored at {self.best_model_path}")
-
+            logging.info(f"Best preprocessor stored at {final_preprocessor_path}")
+            logging.info(f"Best metrics stored at {final_metrics_path}")
 
         except Exception as e:
-            logging.error(f"Error selecting best model on: {e}")
+            logging.error(f"Error selecting best model: {e}")
             raise

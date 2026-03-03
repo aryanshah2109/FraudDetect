@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 import joblib
 import pandas as pd
+import numpy as np
 
 from src.config import config_loader
 from src.logger import logging
@@ -60,9 +61,20 @@ class ArtifactsSetup:
     def save_json(self, data: dict, filename):
         try:
             file_path = Path(self.artifact_path) / filename
-            with open(file_path, "w") as f:
-                json.dump(data, f, indent=4)
-        except:
-            logging.error(f"Error while saving json object to {self.artifact_path}")
-            raise
 
+            # Convert numpy types to native Python types
+            def convert(o):
+                if isinstance(o, (np.integer,)):
+                    return int(o)
+                if isinstance(o, (np.floating,)):
+                    return float(o)
+                if isinstance(o, (np.ndarray,)):
+                    return o.tolist()
+                return o
+
+            with open(file_path, "w") as f:
+                json.dump(data, f, indent=4, default=convert)
+
+        except Exception as e:
+            logging.error(f"Error while saving json object to {self.artifact_path}: {e}")
+            raise
