@@ -33,7 +33,8 @@ jobs:
 
       - name: Lint Code
         run: |
-          flake8 app src tests
+          black --check .
+          isort --check-only .
 
       - name: Run Tests
         run: |

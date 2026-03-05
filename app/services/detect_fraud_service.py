@@ -1,16 +1,14 @@
-from pathlib import Path
 import json
+from pathlib import Path
+
 import pandas as pd
 
 from app.core.config import model, preprocessor
-from app.schemas.detect_fraud_schema import (
-    DetectFraudRequest,
-    DetectFraudResponse
-)
+from app.schemas.detect_fraud_schema import (DetectFraudRequest,
+                                             DetectFraudResponse,
+                                             TransactionType)
 from src.config import config_loader
 from src.logger import logging
-
-from app.schemas.detect_fraud_schema import TransactionType
 
 
 class PredictionError(Exception):

@@ -1,20 +1,18 @@
 import json
-import pandas as pd
-import numpy as np
-import joblib
 import time
 
+import numpy as np
 from sklearn.model_selection import train_test_split
 
 from src.config import config_loader
-from src.data.data_reader import DataReader
 from src.data.data_preprocessor import DataPreprocessor
-from src.training.model_training import ModelTrainer
+from src.data.data_reader import DataReader
 from src.evaluation.metrics import CalculateMetrics
 from src.logger import logging
-from src.utils.mlflow_setup import MLFlowSetup
-from src.utils.artifacts_setup import ArtifactsSetup
 from src.model.model_picker import ModelPicker
+from src.training.model_training import ModelTrainer
+from src.utils.artifacts_setup import ArtifactsSetup
+from src.utils.mlflow_setup import MLFlowSetup
 
 
 class TrainingPipeline:

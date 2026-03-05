@@ -1,5 +1,7 @@
 import yaml
+
 from src.path_constants import CONFIG_PATH
+
 
 def load_config():
     """

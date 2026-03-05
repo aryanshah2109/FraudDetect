@@ -1,8 +1,9 @@
-import os
 import logging
-from logging.handlers import RotatingFileHandler
-from from_root import from_root
+import os
 from datetime import datetime
+from logging.handlers import RotatingFileHandler
+
+from from_root import from_root
 
 from src.config import config_loader
 from src.path_constants import LOG_PATH, MAX_LOG_SIZE

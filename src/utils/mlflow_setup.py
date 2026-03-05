@@ -1,12 +1,9 @@
 import mlflow
-from datetime import datetime
-from pathlib import Path
+from dotenv import load_dotenv
+
 from src.config import config_loader
 from src.logger import logging
 from src.utils.artifacts_setup import ArtifactsSetup
-
-from dotenv import load_dotenv
-import os
 
 load_dotenv()  
 

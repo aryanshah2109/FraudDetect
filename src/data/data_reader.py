@@ -1,13 +1,14 @@
 import os
 from typing import Tuple
-import joblib
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from pathlib import Path
 
 from src.logger import logging
-from src.path_constants import RAW_DATA_PATH, INTERIM_TRAIN_DATA_PATH, INTERIM_TEST_DATA_PATH
+from src.path_constants import (INTERIM_TEST_DATA_PATH,
+                                INTERIM_TRAIN_DATA_PATH, RAW_DATA_PATH)
 from src.utils.artifacts_setup import ArtifactsSetup
+
 
 class DataReader:
     """

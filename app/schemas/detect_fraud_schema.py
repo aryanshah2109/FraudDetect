@@ -1,6 +1,8 @@
-from typing import List, Literal, Annotated
-from pydantic import BaseModel, Field, StringConstraints, field_validator
 from enum import Enum
+from typing import Annotated, List, Literal
+
+from pydantic import BaseModel, Field, field_validator
+
 
 class TransactionType(str, Enum):
     CASH_IN = "CASH IN"

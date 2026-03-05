@@ -1,6 +1,7 @@
-from pathlib import Path
-import joblib
 import json
+from pathlib import Path
+
+import joblib
 
 from src.config import config_loader
 

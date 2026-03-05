@@ -1,10 +1,12 @@
-import joblib
 import json
 from pathlib import Path
 
+import joblib
+
+from src.config import config_loader
 from src.logger import logging
 from src.utils.artifacts_setup import ArtifactsSetup
-from src.config import config_loader
+
 
 class ModelPicker:
     """

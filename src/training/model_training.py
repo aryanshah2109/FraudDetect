@@ -1,12 +1,10 @@
-import os
 import pandas as pd
+from xgboost import XGBClassifier
 
 from src.config import config_loader
 from src.logger import logging
-from src.path_constants import *
 from src.utils.artifacts_setup import ArtifactsSetup
 
-from xgboost import XGBClassifier
 
 class ModelTrainer:
 

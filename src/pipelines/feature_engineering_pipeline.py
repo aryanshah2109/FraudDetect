@@ -1,5 +1,5 @@
 from sklearn.base import BaseEstimator, TransformerMixin
-import pandas as pd
+
 
 class BalanceErrorFeatureGenerator(BaseEstimator, TransformerMixin):
 

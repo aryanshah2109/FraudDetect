@@ -1,24 +1,14 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-from pathlib import Path
+import numpy as np
+import pandas as pd
+from sklearn.metrics import (ConfusionMatrixDisplay, accuracy_score, auc,
+                             average_precision_score, confusion_matrix,
+                             f1_score, precision_recall_curve, precision_score,
+                             recall_score, roc_auc_score, roc_curve)
 
-from src.utils.artifacts_setup import ArtifactsSetup
 from src.config import config_loader
 from src.logger import logging
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    roc_auc_score,
-    roc_curve,
-    auc,
-    confusion_matrix,
-    precision_recall_curve,
-    average_precision_score,
-    ConfusionMatrixDisplay,
-)
+from src.utils.artifacts_setup import ArtifactsSetup
 
 
 class CalculateMetrics:
