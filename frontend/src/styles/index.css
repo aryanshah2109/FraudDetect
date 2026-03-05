@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #080c10;
+    color: #e8f0fe;
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0d1117;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e2a38;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00d4ff44;
+  }
+}
+
+@layer components {
+  .grid-bg {
+    background-image: 
+      linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .scanline {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scanline::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(transparent, rgba(0, 212, 255, 0.04) 50%, transparent);
+    animation: scanline-move 6s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes scanline-move {
+    0% { top: -100%; }
+    100% { top: 200%; }
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.3), 0 0 20px rgba(0, 212, 255, 0.1);
+  }
+
+  .glow-danger {
+    box-shadow: 0 0 0 1px rgba(255, 61, 90, 0.4), 0 0 30px rgba(255, 61, 90, 0.15);
+  }
+
+  .glow-safe {
+    box-shadow: 0 0 0 1px rgba(0, 229, 160, 0.4), 0 0 30px rgba(0, 229, 160, 0.15);
+  }
+
+  .panel {
+    background: #111820;
+    border: 1px solid #1e2a38;
+    border-radius: 8px;
+  }
+
+  .input-field {
+    background: #080c10;
+    border: 1px solid #1e2a38;
+    border-radius: 6px;
+    color: #e8f0fe;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    padding: 10px 14px;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  .input-field:focus {
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.06);
+  }
+
+  .input-field::placeholder {
+    color: #3d5266;
+  }
+
+  .label-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7a92aa;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00d4ff, #0099bb);
+    color: #080c10;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 24px rgba(0, 212, 255, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .stat-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: #00d4ff;
+    line-height: 1;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+}
+
+/* Probability bar animation */
+@keyframes fill-bar {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+
+.prob-bar-fill {
+  animation: fill-bar 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Result card entrance */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-appear {
+  animation: slide-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Ping for live indicator */
+@keyframes ping-accent {
+  0% { transform: scale(1); opacity: 1; }
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+.ping-accent {
+  animation: ping-accent 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}

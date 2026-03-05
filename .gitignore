@@ -100,3 +100,36 @@ data/interim/*.csv
 /artifacts
 /models/*
 /reports
+
+# Node modules
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+frontend/build/
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# Environment variables
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Coverage reports
+frontend/coverage/
+
+# Temporary files
+*.log
+*.tmp

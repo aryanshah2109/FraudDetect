@@ -30,4 +30,6 @@ class DetectFraudResponse(BaseModel):
     prediction: Annotated[Literal[0, 1], Field(title="Prediction from model", description="Predicted class (0 = Not fraud, 1 = fraud)")]
     prediction_label : Annotated[Literal["Fraud", "Not Fraud"], Field(title="Prediction label", description="Predicted label (Fraud, Not Fraud)")]
     fraud_probability: Annotated[float, Field(title="Probability of fraud", description="Predicted class (0 = Not fraud, 1 = fraud)")]
+    risk_factors: Annotated[List[str], Field(title="Key factors for explainability")]
+    threshold: float
     

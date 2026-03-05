@@ -10,6 +10,8 @@ from app.schemas.detect_fraud_schema import (
 from src.config import config_loader
 from src.logger import logging
 
+from app.schemas.detect_fraud_schema import TransactionType
+
 
 class PredictionError(Exception):
     pass
@@ -37,9 +39,29 @@ class FraudDetectionService:
 
     def __init__(self):
         self.threshold = ThresholdFetcher().get_threshold()
+    
+    def generate_risk_factors(self, input_data):
+        reasons = []
+
+        if input_data.oldbalanceOrg == input_data.amount:
+            reasons.append("Sender balance equals transaction amount")
+
+        if input_data.newbalanceOrig == 0:
+            reasons.append("Sender balance drained to zero")
+
+        if input_data.oldbalanceDest == 0 and input_data.newbalanceDest == 0:
+            reasons.append("Receiver balance unchanged")
+
+        if input_data.type in [TransactionType.TRANSFER, TransactionType.CASH_OUT]:
+            reasons.append("Transaction type commonly used in fraud")
+
+        return reasons
 
     def predict(self, payload: DetectFraudRequest) -> DetectFraudResponse:
         try:
+            # Fetch risk factors based on input features
+            risk_factors = self.generate_risk_factors(payload)
+
             # Convert to dict (JSON mode auto-converts Enum)
             data = payload.model_dump(mode="json")
 
@@ -58,7 +80,9 @@ class FraudDetectionService:
             return DetectFraudResponse(
                 prediction=prediction,
                 prediction_label="Fraud" if prediction else "Not Fraud",
-                fraud_probability=probability
+                fraud_probability=probability,
+                risk_factors = risk_factors,
+                threshold=self.threshold
             )
 
         except Exception as e:
