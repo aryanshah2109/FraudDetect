@@ -36,7 +36,7 @@ class ThresholdFetcher:
 class FraudDetectionService:
 
     def __init__(self):
-        self.threshold = ThresholdFetcher().get_threshold()
+        self.threshold = None
     
     def generate_risk_factors(self, input_data):
         reasons = []
@@ -57,8 +57,10 @@ class FraudDetectionService:
 
     def predict(self, payload: DetectFraudRequest) -> DetectFraudResponse:
         try:
-            # Load model and preprocessor
+            # Load model, preprocessor and threshold
             model, preprocessor = load_artifacts()
+            if self.threshold is None:
+                self.threshold = ThresholdFetcher().get_threshold()
 
             # Fetch risk factors based on input features
             risk_factors = self.generate_risk_factors(payload)
