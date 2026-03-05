@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from app.core.config import model, preprocessor
+from app.core.config import load_artifacts
 from app.schemas.detect_fraud_schema import (DetectFraudRequest,
                                              DetectFraudResponse,
                                              TransactionType)
@@ -57,6 +57,9 @@ class FraudDetectionService:
 
     def predict(self, payload: DetectFraudRequest) -> DetectFraudResponse:
         try:
+            # Load model and preprocessor
+            model, preprocessor = load_artifacts()
+
             # Fetch risk factors based on input features
             risk_factors = self.generate_risk_factors(payload)
 

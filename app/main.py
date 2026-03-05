@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 
 from app.routers.detect_fraud_router import router
 from app.services.detect_fraud_service import PredictionError
+from app.core.config import load_artifacts
 
 load_dotenv()
 
@@ -32,6 +33,9 @@ async def prediction_exception_handler(request: Request, exc: PredictionError):
         }
     )
 
+@app.on_event("startup")
+def load_model():
+    load_artifacts()
 
 @app.get("/")
 def home():

@@ -13,15 +13,19 @@ MODEL_PATH = BASE_DIR / config["inference"]["best_model_path"]
 PREPROCESSOR_PATH = BASE_DIR / config["inference"]["best_preprocessor_path"]
 METRICS_PATH = BASE_DIR / config["inference"]["best_metrics_path"]
 
+model = None
+preprocessor = None
 
 
-print("Loading model...")
-model = joblib.load(MODEL_PATH)
-print("Model loaded")
+def load_artifacts():
+    global model, preprocessor
 
-print("Loading preprocessor...")
-preprocessor = joblib.load(PREPROCESSOR_PATH)
-print("Preprocessor loaded")
+    if model is None:
+        print("Loading model...")
+        model = joblib.load(MODEL_PATH)
 
-with open(METRICS_PATH, "r") as file:
-    metrics = json.load(file)
+    if preprocessor is None:
+        print("Loading preprocessor...")
+        preprocessor = joblib.load(PREPROCESSOR_PATH)
+
+    return model, preprocessor
