@@ -210,7 +210,7 @@ curl -X POST "http://localhost:8000/predict/" \
 ### Train the Model
 ```bash
 # Run complete training pipeline
-python -m src.pipelines.training_pipeline
+python -m train.py
 
 # This will:
 # 1. Load raw data
@@ -474,7 +474,7 @@ pip install -r requirements.txt && pip install -e .
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 # Train
-python -m src.pipelines.training_pipeline
+python -m test.py
 
 # Monitor
 mlflow ui
@@ -516,10 +516,10 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 | Item | Details |
 |------|---------|
-| **Author** | [Your Name] |
-| **Email** | [your.email@example.com] |
-| **GitHub** | [@yourusername](https://github.com/yourusername) |
-| **Issues** | [GitHub Issues](https://github.com/yourusername/FraudDetect/issues) |
+| **Author** | [Aryan Shah] |
+| **Email** | [aryanrshah2109@gmail.com] |
+| **GitHub** | [@aryanshah2109](https://github.com/aryanshah2109) |
+| **Issues** | [GitHub Issues](https://github.com/aryanshah2109/FraudDetect/issues) |
 
 ---
 
