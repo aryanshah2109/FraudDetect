@@ -117,7 +117,6 @@ frontend/pnpm-debug.log*
 frontend/.env
 frontend/.env.local
 frontend/.env.*.local
-frontend/.env.example
 
 # OS files
 .DS_Store
