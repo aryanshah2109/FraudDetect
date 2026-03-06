@@ -89,7 +89,7 @@ export default function Dashboard() {
           FraudDetect v1.0.0 — MIT License
         </div>
         <div className="font-mono text-[11px] text-text-muted">
-          Backend: <span className="text-accent">http://localhost:8000</span>
+          Backend: <span className="text-accent">{import.meta.env.VITE_API_URL}</span>
         </div>
       </footer>
     </main>

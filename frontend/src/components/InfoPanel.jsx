@@ -63,7 +63,7 @@ export default function InfoPanel() {
           Example API Call
         </div>
         <div className="text-[10px] font-mono text-text-secondary mb-2">
-          POST http://localhost:8000/predict/
+          POST {import.meta.env.VITE_API_URL}/predict/
         </div>
         <pre className="bg-void rounded border border-border p-3 font-mono text-[11px] text-safe overflow-x-auto leading-relaxed">
           {EXAMPLE_PAYLOAD}
