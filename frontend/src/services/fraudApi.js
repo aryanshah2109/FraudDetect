@@ -74,7 +74,7 @@ export const checkHealth = async () => {
 
 // Use fetch with VITE_API_URL for /predict endpoint
 export const predictFraud = async (transaction) => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/predict`, {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/predict/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
