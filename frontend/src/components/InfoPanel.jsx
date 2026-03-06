@@ -63,7 +63,7 @@ export default function InfoPanel() {
           Example API Call
         </div>
         <div className="text-[10px] font-mono text-text-secondary mb-2">
-          POST {import.meta.env.VITE_API_URL}/predict/
+          POST <a href={`${import.meta.env.VITE_API_URL}/predict/`} target="_blank" rel="noopener noreferrer" className="text-accent underline">{import.meta.env.VITE_API_URL}/predict/</a>
         </div>
         <pre className="bg-void rounded border border-border p-3 font-mono text-[11px] text-safe overflow-x-auto leading-relaxed">
           {EXAMPLE_PAYLOAD}
@@ -75,7 +75,12 @@ export default function InfoPanel() {
 {`{
   "prediction": 1,
   "prediction_label": "Fraud",
-  "fraud_probability": 0.87
+  "fraud_probability": 0.87,
+  "risk_factors": [
+    "Large amount transfer",
+    "Balance mismatch detected"
+  ],
+  "threshold": 0.65
 }`}
         </pre>
       </div>
