@@ -210,10 +210,15 @@ docker-compose down
 
 This will start the backend API on http://localhost:8000 and the frontend on http://localhost:5173.
 
-**Access points:**
+**Access points (Local Development):**
 - API: http://localhost:8000
 - Interactive Docs: http://localhost:8000/docs
 - Frontend: http://localhost:5173
+
+**Access points (Production):**
+- API: https://frauddetect-backend-jpgf.onrender.com/
+- Interactive Docs: https://frauddetect-backend-jpgf.onrender.com/docs
+- Frontend: https://frauddetect-frontend.onrender.com/
 
 ---
 
@@ -228,7 +233,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
-**Access points:**
+**Access points (Local Development):**
 - API: http://localhost:8000
 - Interactive Docs: http://localhost:8000/docs
 - Alternative Docs: http://localhost:8000/redoc
@@ -246,13 +251,16 @@ npm run build
 npm run preview
 ```
 
-**Access points:**
+**Access points (Local Development):**
 - Frontend: http://localhost:5173 (development)
+
+**Access points (Production):**
+- Frontend: https://frauddetect-frontend.onrender.com/
 - Production: http://localhost:4173 (preview)
 
 ### Make a Prediction
 ```bash
-curl -X POST "http://localhost:8000/predict/" \
+curl -X POST "https://frauddetect-backend-jpgf.onrender.com/predict/" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "TRANSFER",
@@ -293,7 +301,8 @@ python -m train.py
 
 ### Base URL
 ```
-http://localhost:8000
+Local Development: http://localhost:8000
+Production: https://frauddetect-backend-jpgf.onrender.com/
 ```
 
 ### Health Check
@@ -360,7 +369,7 @@ Content-Type: application/json
 ```python
 import requests
 
-url = "http://localhost:8000/predict/"
+url = "https://frauddetect-backend-jpgf.onrender.com/predict/"
 payload = {
     "type": "TRANSFER",
     "amount": 100000,
