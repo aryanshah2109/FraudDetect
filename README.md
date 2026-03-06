@@ -17,6 +17,7 @@
 - [Installation](#-installation)
 - [Quick Start](#-quick-start)
 - [API Documentation](#-api-documentation)
+- [Frontend](#-frontend)
 - [Project Structure](#-project-structure)
 - [Data Pipeline](#-data-pipeline)
 - [Model Training](#-model-training)
@@ -96,6 +97,7 @@
 |-------|-----------|---------|---------|
 | **API** | FastAPI | 0.128.0 | REST framework |
 | **Server** | Uvicorn | 0.40.0 | ASGI server |
+| **Frontend** | React, Vite, Tailwind CSS | 18.2.0, 5.0.0, 3.4.0 | User interface |
 | **ML Model** | XGBoost | 3.1.3 | Gradient boosting classifier |
 | **Preprocessing** | scikit-learn | 1.8.0 | Data transformation |
 | **Data** | pandas, numpy | 2.3.3, 2.4.2 | Data manipulation |
@@ -109,8 +111,10 @@
 ## 📦 Prerequisites
 
 - **Python**: 3.9 or higher
+- **Node.js**: 16 or higher (for frontend)
 - **CUDA** (optional): Required for GPU acceleration; CPU fallback available
 - **pip**: Python package manager
+- **npm**: Node.js package manager
 - **Virtual Environment**: venv or conda (recommended)
 - **Disk Space**: ~2-5GB for data, models, artifacts
 - **Network**: Internet access for MLflow and DagHub
@@ -168,6 +172,18 @@ pip list | grep -E 'fastapi|xgboost|mlflow'
 python -c "import fastapi; import xgboost; import mlflow; print('✓ All packages installed')"
 ```
 
+### Step 6: Install Frontend Dependencies
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install Node.js dependencies
+npm install
+
+# Return to root
+cd ..
+```
+
 ---
 
 ## 🚀 Quick Start
@@ -185,6 +201,23 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 - API: http://localhost:8000
 - Interactive Docs: http://localhost:8000/docs
 - Alternative Docs: http://localhost:8000/redoc
+
+### Start the Frontend
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Development mode with hot-reload
+npm run dev
+
+# Production build
+npm run build
+npm run preview
+```
+
+**Access points:**
+- Frontend: http://localhost:5173 (development)
+- Production: http://localhost:4173 (preview)
 
 ### Make a Prediction
 ```bash
@@ -315,6 +348,30 @@ print(f"Fraud Probability: {result['fraud_probability']:.2%}")
 
 ---
 
+## 🎨 Frontend
+
+The frontend is a modern React application built with Vite for fast development and Tailwind CSS for styling. It provides a user-friendly interface to interact with the fraud detection API.
+
+### Features
+- **Real-Time Predictions**: Submit transaction data and receive instant fraud detection results
+- **Responsive Design**: Mobile-friendly interface with Tailwind CSS
+- **Error Handling**: Graceful error boundaries and user feedback
+- **Modern UI**: Clean, intuitive design for easy transaction input
+
+### Technologies
+- **React 18**: Component-based UI framework
+- **Vite**: Fast build tool and development server
+- **Tailwind CSS**: Utility-first CSS framework
+- **Axios**: HTTP client for API communication
+
+### Usage
+1. Start the backend API (see Quick Start)
+2. Start the frontend (see Quick Start)
+3. Open http://localhost:5173 in your browser
+4. Enter transaction details and submit for fraud detection
+
+---
+
 ## 📁 Project Structure
 
 ```
@@ -325,6 +382,18 @@ FraudDetect/
 │   ├── routers/                  # API endpoints
 │   ├── schemas/                  # Pydantic models
 │   └── services/                 # Prediction logic
+│
+├── frontend/                     # React frontend application
+│   ├── public/                   # Static assets
+│   ├── src/                      # Source code
+│   │   ├── components/           # Reusable UI components
+│   │   ├── pages/                # Page components
+│   │   ├── services/             # API service functions
+│   │   ├── hooks/                # Custom React hooks
+│   │   └── styles/               # Additional styles
+│   ├── package.json              # Node.js dependencies
+│   ├── vite.config.js            # Vite configuration
+│   └── tailwind.config.js        # Tailwind CSS configuration
 │
 ├── src/                          # ML training & utilities
 │   ├── config/                   # Configuration (YAML)
@@ -469,9 +538,13 @@ mlflow ui
 # Setup
 python -m venv venv && venv\Scripts\activate
 pip install -r requirements.txt && pip install -e .
+cd frontend && npm install && cd ..
 
-# Run
+# Run Backend
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Run Frontend
+cd frontend && npm run dev
 
 # Train
 python -m test.py
@@ -490,8 +563,10 @@ tail -f logs/app.log
 | Module not found | `pip install -r requirements.txt` |
 | CUDA not available | Model uses CPU fallback |
 | Port 8000 busy | Use `--port 8001` |
+| Port 5173 busy | Use `npm run dev -- --port 5174` |
 | Model not found | Train: `python -m src.pipelines.training_pipeline` |
 | MLflow error | Check `MLFLOW_TRACKING_URI` in `.env` |
+| Frontend build error | `cd frontend && npm install` |
 
 ---
 
