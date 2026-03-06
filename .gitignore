@@ -98,7 +98,6 @@ data/interim/*.csv
 
 # dvc specific content
 /artifacts
-/models/*
 /reports
 
 # Node modules
@@ -118,6 +117,7 @@ frontend/pnpm-debug.log*
 frontend/.env
 frontend/.env.local
 frontend/.env.*.local
+frontend/.env.example
 
 # OS files
 .DS_Store

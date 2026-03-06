@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000';
+
+// Use VITE_API_URL from environment
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -68,9 +71,25 @@ export const checkHealth = async () => {
  *
  * @returns {Promise<{prediction: number, prediction_label: string, fraud_probability: number}>}
  */
+
+// Use fetch with VITE_API_URL for /predict endpoint
 export const predictFraud = async (transaction) => {
-  const response = await api.post('/predict/', transaction);
-  return response.data;
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/predict`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(transaction),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw {
+      status: response.status,
+      message: errorData?.detail || errorData?.error || 'An error occurred with the server.',
+      raw: errorData,
+    };
+  }
+  return response.json();
 };
 
 export default api;
