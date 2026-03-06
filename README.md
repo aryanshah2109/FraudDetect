@@ -15,6 +15,7 @@
 - [Technology Stack](#-technology-stack)
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
+- [Docker Setup](#-docker-setup)
 - [Quick Start](#-quick-start)
 - [API Documentation](#-api-documentation)
 - [Frontend](#-frontend)
@@ -118,6 +119,7 @@
 - **Virtual Environment**: venv or conda (recommended)
 - **Disk Space**: ~2-5GB for data, models, artifacts
 - **Network**: Internet access for MLflow and DagHub
+- **Docker** (optional): For containerized deployment and easy setup
 
 ---
 
@@ -186,7 +188,36 @@ cd ..
 
 ---
 
-## 🚀 Quick Start
+## � Docker Setup
+
+If you prefer using Docker, you can run the application with Docker Compose. This is recommended for easy deployment and to avoid dependency conflicts.
+
+### Prerequisites for Docker
+- Docker installed on your system
+- Docker Compose installed
+
+### Build and Run with Docker Compose
+```bash
+# Build and start services
+docker-compose up --build
+
+# Run in background
+docker-compose up -d --build
+
+# Stop services
+docker-compose down
+```
+
+This will start the backend API on http://localhost:8000 and the frontend on http://localhost:5173.
+
+**Access points:**
+- API: http://localhost:8000
+- Interactive Docs: http://localhost:8000/docs
+- Frontend: http://localhost:5173
+
+---
+
+## �🚀 Quick Start
 
 ### Start the API Server
 ```bash

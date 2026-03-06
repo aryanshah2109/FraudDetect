@@ -1,0 +1,16 @@
+venv
+frontend
+notebooks
+tests
+logs
+.git
+
+data
+artifacts
+reports
+references
+
+*.csv
+*.parquet
+*.pkl
+*.joblib
