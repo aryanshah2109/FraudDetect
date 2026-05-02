@@ -132,3 +132,6 @@ frontend/coverage/
 # Temporary files
 *.log
 *.tmp
+
+# Virtual Environment
+venv/
