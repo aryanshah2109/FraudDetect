@@ -8,7 +8,7 @@
 
 const ENV = {
   
-  API_BASE_URL: 'http://localhost:8000',
+  API_BASE_URL: 'https://frauddetect-backend-jpgf.onrender.com',
 
   get PREDICT_URL()   { return this.API_BASE_URL + '/predict/'; },
   get ARTIFACTS_URL() { return this.API_BASE_URL + '/artifacts/'; },
