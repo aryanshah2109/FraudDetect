@@ -97,7 +97,14 @@ data/processed/*.csv
 data/interim/*.csv
 
 # dvc specific content
-/artifacts
+
+# ignore datasets inside artifacts
+artifacts_xgboost/**/train_raw.csv
+artifacts_xgboost/**/test_raw.csv
+
+# optional (if large)
+*.csv
+
 /reports
 
 # Node modules
