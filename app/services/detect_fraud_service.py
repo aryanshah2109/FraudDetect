@@ -9,7 +9,7 @@ from app.schemas.detect_fraud_schema import (DetectFraudRequest,
                                              TransactionType)
 from src.config import config_loader
 from src.logger import logging
-
+from app.core.config import BASE_DIR  
 
 class PredictionError(Exception):
     pass
@@ -18,7 +18,7 @@ class PredictionError(Exception):
 class ThresholdFetcher:
     def __init__(self):
         config = config_loader.load_config()
-        self.best_metrics_path = Path(config["inference"]["best_metrics_path"])
+        self.best_metrics_path = BASE_DIR / config["inference"]["best_metrics_path"]
 
     def get_threshold(self) -> float:
         try:
