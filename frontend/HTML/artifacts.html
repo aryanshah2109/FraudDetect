@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FraudDetect — Model Artifacts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../CSS/styles.css" />
+  <link rel="stylesheet" href="../CSS/artifacts.css" />
+</head>
+<body>
+
+  <div class="noise"></div>
+  <div class="grid-bg"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">Fraud<span class="accent">Detect</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Detect</a>
+        <a href="artifacts.html" class="nav-link active">Artifacts</a>
+        <a href="http://localhost:8000/docs" target="_blank" class="nav-link">API Docs</a>
+        <a href="https://github.com/aryanshah2109/FraudDetect" target="_blank" class="nav-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <section class="art-hero">
+    <div class="container">
+      <div class="art-hero-inner">
+        <div class="art-hero-left">
+          <div class="hero-badge">
+            <span class="badge-dot"></span>
+            Latest Experiment Run
+          </div>
+          <h1 class="art-title">Model <span class="hero-accent">Artifacts</span></h1>
+          <p class="art-sub">Live metrics, evaluation curves and confusion matrix from the most recent XGBoost training run.</p>
+        </div>
+        <div class="run-badge-box" id="run-badge-box">
+          <div class="run-badge-label">Run ID</div>
+          <div class="run-badge-val" id="run-id">—</div>
+          <div class="run-badge-refresh" id="refresh-btn" title="Refresh">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOADING STATE -->
+  <div class="art-loading" id="art-loading">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Fetching latest run from API…</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div class="art-error" id="art-error" style="display:none;">
+    <div class="error-icon-big">⚠</div>
+    <p class="error-title-big">Could not load artifacts</p>
+    <p class="error-desc" id="art-error-msg">Make sure the backend is running at <code>http://localhost:8000</code></p>
+    <button class="btn-retry-big" id="art-retry-btn">Retry</button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="art-content" id="art-content" style="display:none;">
+    <div class="container">
+
+      <!-- METRICS GRID -->
+      <div class="art-section">
+        <div class="art-section-header">
+          <h2 class="art-section-title">
+            <span class="section-icon">📊</span> Performance Metrics
+          </h2>
+          <span class="art-section-sub">Evaluated on held-out test set</span>
+        </div>
+
+        <div class="metrics-grid" id="metrics-grid">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- CONFUSION MATRIX TABLE -->
+      <div class="art-section">
+        <div class="art-section-header">
+          <h2 class="art-section-title">
+            <span class="section-icon">🔢</span> Confusion Matrix
+          </h2>
+          <span class="art-section-sub">Predicted vs Actual labels</span>
+        </div>
+
+        <div class="cm-wrap">
+          <div class="cm-table-wrap" id="cm-table-wrap">
+            <!-- Injected by JS -->
+          </div>
+          <div class="cm-legend">
+            <div class="cm-legend-item">
+              <span class="cm-swatch tp"></span> TP — True Positives (Fraud caught)
+            </div>
+            <div class="cm-legend-item">
+              <span class="cm-swatch tn"></span> TN — True Negatives (Legit cleared)
+            </div>
+            <div class="cm-legend-item">
+              <span class="cm-swatch fp"></span> FP — False Positives (Legit flagged)
+            </div>
+            <div class="cm-legend-item">
+              <span class="cm-swatch fn"></span> FN — False Negatives (Fraud missed)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="art-section">
+        <div class="art-section-header">
+          <h2 class="art-section-title">
+            <span class="section-icon">📈</span> Evaluation Curves
+          </h2>
+          <span class="art-section-sub">From the latest training run artifacts</span>
+        </div>
+
+        <div class="charts-grid" id="charts-grid">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- THRESHOLD CALLOUT -->
+      <div class="art-section">
+        <div class="threshold-callout" id="threshold-callout">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <span class="footer-logo">⬡ FraudDetect</span>
+          <span class="footer-sub">Built by Aryan Shah</span>
+        </div>
+        <div class="footer-links">
+          <a href="http://localhost:8000/docs" target="_blank">API Docs</a>
+          <a href="https://github.com/aryanshah2109/FraudDetect" target="_blank">GitHub</a>
+          <a href="mailto:aryanrshah2109@gmail.com">Contact</a>
+        </div>
+        <div class="footer-right">
+          <span class="status-dot"></span>
+          <span class="status-text">API Live</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../JS/env.js"></script>
+  <script src="../JS/artifacts.js"></script>
+</body>
+</html>
