@@ -98,7 +98,7 @@
 |-------|-----------|---------|---------|
 | **API** | FastAPI | 0.128.0 | REST framework |
 | **Server** | Uvicorn | 0.40.0 | ASGI server |
-| **Frontend** | React, Vite, Tailwind CSS | 18.2.0, 5.0.0, 3.4.0 | User interface |
+| **Frontend** | HTML, CSS, JS | 18.2.0, 5.0.0, 3.4.0 | User interface |
 | **ML Model** | XGBoost | 3.1.3 | Gradient boosting classifier |
 | **Preprocessing** | scikit-learn | 1.8.0 | Data transformation |
 | **Data** | pandas, numpy | 2.3.3, 2.4.2 | Data manipulation |
@@ -112,10 +112,8 @@
 ## 📦 Prerequisites
 
 - **Python**: 3.9 or higher
-- **Node.js**: 16 or higher (for frontend)
 - **CUDA** (optional): Required for GPU acceleration; CPU fallback available
 - **pip**: Python package manager
-- **npm**: Node.js package manager
 - **Virtual Environment**: venv or conda (recommended)
 - **Disk Space**: ~2-5GB for data, models, artifacts
 - **Network**: Internet access for MLflow and DagHub
@@ -174,17 +172,8 @@ pip list | grep -E 'fastapi|xgboost|mlflow'
 python -c "import fastapi; import xgboost; import mlflow; print('✓ All packages installed')"
 ```
 
-### Step 6: Install Frontend Dependencies
-```bash
-# Navigate to frontend directory
-cd frontend
-
-# Install Node.js dependencies
-npm install
-
-# Return to root
-cd ..
-```
+### Step 6: Frontend (static)
+The repository includes a lightweight static frontend located in the `frontend/` folder. You can open the HTML files directly in your browser or serve them with a simple static server.
 
 ---
 
@@ -208,17 +197,17 @@ docker-compose up -d --build
 docker-compose down
 ```
 
-This will start the backend API on http://localhost:8000 and the frontend on http://localhost:5173.
+This will start the backend API on http://localhost:8000.
 
 **Access points (Local Development):**
 - API: http://localhost:8000
 - Interactive Docs: http://localhost:8000/docs
-- Frontend: http://localhost:5173
+- Frontend: http://localhost:5500
 
 **Access points (Production):**
 - API: https://frauddetect-backend-jpgf.onrender.com/
 - Interactive Docs: https://frauddetect-backend-jpgf.onrender.com/docs
-- Frontend: https://frauddetect-frontend.onrender.com/
+- Frontend: https://frauddetect-1gju.onrender.com//
 
 ---
 
@@ -239,24 +228,23 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 - Alternative Docs: http://localhost:8000/redoc
 
 ### Start the Frontend
+You can open the frontend directly or serve it with a simple static server.
+
+Open in browser (quick):
+
+1. Open `frontend/index.html` in your browser (double-click or `File → Open`).
+
+Serve with Python (recommended for correct URL handling):
+
 ```bash
-# Navigate to frontend directory
+# from project root
 cd frontend
-
-# Development mode with hot-reload
-npm run dev
-
-# Production build
-npm run build
-npm run preview
+# serve on port 4173 (or any free port)
+python -m http.server 4173
+# then open: http://localhost:4173/index.html
 ```
 
-**Access points (Local Development):**
-- Frontend: http://localhost:5173 (development)
-
-**Access points (Production):**
-- Frontend: https://frauddetect-frontend.onrender.com/
-- Production: http://localhost:4173 (preview)
+Or use any static file server you prefer (live-server, http-server, etc.).
 
 ### Make a Prediction
 ```bash
@@ -282,7 +270,7 @@ curl -X POST "https://frauddetect-backend-jpgf.onrender.com/predict/" \
 ### Train the Model
 ```bash
 # Run complete training pipeline
-python -m train.py
+python -m test.py
 
 # This will:
 # 1. Load raw data
@@ -390,24 +378,23 @@ print(f"Fraud Probability: {result['fraud_probability']:.2%}")
 
 ## 🎨 Frontend
 
-The frontend is a modern React application built with Vite for fast development and Tailwind CSS for styling. It provides a user-friendly interface to interact with the fraud detection API.
+The frontend is a lightweight static UI implemented with plain HTML, CSS and vanilla JavaScript. It consumes the backend API (`/predict/` and `/artifacts/`) to display predictions and experiment artifacts.
 
 ### Features
 - **Real-Time Predictions**: Submit transaction data and receive instant fraud detection results
-- **Responsive Design**: Mobile-friendly interface with Tailwind CSS
-- **Error Handling**: Graceful error boundaries and user feedback
-- **Modern UI**: Clean, intuitive design for easy transaction input
+- **Responsive Layout**: Works across desktop and mobile devices with CSS-based responsiveness
+- **Client-side Error Handling**: Friendly messages when the API is unavailable
+- **Lightweight, easy to host**: No build step required for the included UI
 
 ### Technologies
-- **React 18**: Component-based UI framework
-- **Vite**: Fast build tool and development server
-- **Tailwind CSS**: Utility-first CSS framework
-- **Axios**: HTTP client for API communication
+- **Vanilla JavaScript**: API calls, DOM manipulation
+- **Plain CSS**: Custom styles located in `frontend/css/`
+- **Static HTML**: Entry points in `frontend/index.html` and `frontend/artifacts.html`
 
 ### Usage
 1. Start the backend API (see Quick Start)
 2. Start the frontend (see Quick Start)
-3. Open http://localhost:5173 in your browser
+3. Open http://localhost:5500 in your browser
 4. Enter transaction details and submit for fraud detection
 
 ---
@@ -423,17 +410,17 @@ FraudDetect/
 │   ├── schemas/                  # Pydantic models
 │   └── services/                 # Prediction logic
 │
-├── frontend/                     # React frontend application
-│   ├── public/                   # Static assets
-│   ├── src/                      # Source code
-│   │   ├── components/           # Reusable UI components
-│   │   ├── pages/                # Page components
-│   │   ├── services/             # API service functions
-│   │   ├── hooks/                # Custom React hooks
-│   │   └── styles/               # Additional styles
-│   ├── package.json              # Node.js dependencies
-│   ├── vite.config.js            # Vite configuration
-│   └── tailwind.config.js        # Tailwind CSS configuration
+├── frontend/                     # Static frontend (HTML/CSS/JS)
+│   ├── index.html                # Main UI (Detect)
+│   ├── artifacts.html            # Artifacts / Experiments page
+│   ├── css/                      # Stylesheets
+│   │   ├── styles.css
+│   │   └── artifacts.css
+│   └── js/                       # Frontend scripts
+│       ├── app.js
+│       ├── artifacts.js
+│       ├── experiments.js
+│       └── env.js                # API base URL configuration
 │
 ├── src/                          # ML training & utilities
 │   ├── config/                   # Configuration (YAML)
