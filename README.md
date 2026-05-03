@@ -98,7 +98,7 @@
 |-------|-----------|---------|---------|
 | **API** | FastAPI | 0.128.0 | REST framework |
 | **Server** | Uvicorn | 0.40.0 | ASGI server |
-| **Frontend** | HTML, CSS, JS | 18.2.0, 5.0.0, 3.4.0 | User interface |
+| **Frontend** | HTML, CSS, JS | ... | User interface |
 | **ML Model** | XGBoost | 3.1.3 | Gradient boosting classifier |
 | **Preprocessing** | scikit-learn | 1.8.0 | Data transformation |
 | **Data** | pandas, numpy | 2.3.3, 2.4.2 | Data manipulation |
