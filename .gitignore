@@ -105,8 +105,6 @@ artifacts_xgboost/**/test_raw.csv
 # optional (if large)
 *.csv
 
-/reports
-
 # Node modules
 frontend/node_modules/
 
