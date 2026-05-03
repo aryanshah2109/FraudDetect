@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FraudDetect — Credit Card Fraud Detection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../CSS/styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="grid-bg"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">Fraud<span class="accent">Detect</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active">Detect</a>
+        <a href="artifacts.html" class="nav-link">Artifacts</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="http://localhost:8000/docs" target="_blank" class="nav-link">API Docs</a>
+        <a href="https://github.com/aryanshah2109/FraudDetect" target="_blank" class="nav-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="detect">
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Live Model — Production Ready
+      </div>
+      <h1 class="hero-title">
+        Detect Credit Card<br />
+        <span class="hero-accent">Fraud in Real-Time</span>
+      </h1>
+      <p class="hero-sub">
+        XGBoost · 99.76% Recall · PR-AUC 98.77% · Sub-100ms Inference
+      </p>
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-value">1.27M</span>
+          <span class="stat-label">Transactions Trained</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value">99.93%</span>
+          <span class="stat-label">Accuracy</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value">1639/1643</span>
+          <span class="stat-label">Fraud Caught</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value">&lt;100ms</span>
+          <span class="stat-label">Inference Latency</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DETECT SECTION -->
+  <section class="detect-section">
+    <div class="container">
+      <div class="detect-grid">
+        <!-- LEFT: Input Form -->
+        <div class="card form-card">
+          <div class="card-header">
+            <span class="card-icon">⬡</span>
+            <h2 class="card-title">Transaction Input</h2>
+            <span class="card-badge">POST /predict/</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="txn-type">Transaction Type</label>
+            <div class="select-wrapper">
+              <select id="txn-type" class="form-select">
+                <option value="TRANSFER">TRANSFER</option>
+                <option value="CASH_OUT">CASH OUT</option>
+                <option value="PAYMENT">PAYMENT</option>
+                <option value="CASH_IN">CASH IN</option>
+                <option value="DEBIT">DEBIT</option>
+              </select>
+              <span class="select-arrow">▾</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="amount">Transaction Amount</label>
+            <div class="input-wrapper">
+              <span class="input-prefix">₹</span>
+              <input type="number" id="amount" class="form-input prefix-input" placeholder="100000" min="0" step="0.01" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="old-bal-orig">Sender Balance (Before)</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="old-bal-orig" class="form-input prefix-input" placeholder="50000" min="0" step="0.01" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="new-bal-orig">Sender Balance (After)</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="new-bal-orig" class="form-input prefix-input" placeholder="0" min="0" step="0.01" />
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="old-bal-dest">Receiver Balance (Before)</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="old-bal-dest" class="form-input prefix-input" placeholder="10000" min="0" step="0.01" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="new-bal-dest">Receiver Balance (After)</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="new-bal-dest" class="form-input prefix-input" placeholder="110000" min="0" step="0.01" />
+              </div>
+            </div>
+          </div>
+          <div class="presets">
+            <span class="presets-label">Try a preset:</span>
+            <button class="preset-btn" data-preset="fraud">🔴 Suspicious Transfer</button>
+            <button class="preset-btn" data-preset="legit">🟢 Normal Payment</button>
+            <button class="preset-btn" data-preset="cashout">🟠 Large Cash Out</button>
+          </div>
+          <div class="form-actions">
+            <button class="btn-detect" id="detect-btn">
+              <span class="btn-icon">⬡</span>
+              <span class="btn-text">Run Fraud Detection</span>
+              <span class="btn-loader" id="btn-loader"></span>
+            </button>
+            <button class="btn-reset" id="reset-btn">Reset</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: Result Panel -->
+        <div class="card result-card" id="result-card">
+          <div class="result-placeholder" id="result-placeholder">
+            <div class="placeholder-icon">⬡</div>
+            <p class="placeholder-text">Enter transaction details<br />and run detection</p>
+            <div class="placeholder-grid">
+              <div class="pg-row"></div>
+              <div class="pg-row"></div>
+              <div class="pg-row short"></div>
+            </div>
+          </div>
+          <div class="result-content" id="result-content" style="display:none;">
+            <div class="result-verdict" id="result-verdict"></div>
+            <div class="result-prob-section">
+              <div class="prob-label-row">
+                <span class="prob-label">Fraud Probability</span>
+                <span class="prob-value" id="prob-value">0%</span>
+              </div>
+              <div class="prob-bar-track">
+                <div class="prob-bar-fill" id="prob-bar"></div>
+                <div class="prob-threshold-line" id="threshold-line" title="Decision Threshold"></div>
+              </div>
+              <div class="prob-scale">
+                <span>0%</span><span>Safe</span><span>Risk</span><span>100%</span>
+              </div>
+            </div>
+            <div class="result-metrics" id="result-metrics"></div>
+
+            <!-- Risk Factors -->
+            <div class="risk-factors-wrap" id="risk-factors-wrap" style="display:none;">
+              <div class="risk-factors-header">
+                <span class="risk-factors-icon">⚠️</span>
+                <span class="risk-factors-title">Risk Factors Detected</span>
+              </div>
+              <div class="risk-factors-list" id="risk-factors-list"></div>
+            </div>
+
+            <div class="json-preview">
+              <div class="json-header">
+                <span class="json-label">API Response</span>
+                <button class="copy-btn" id="copy-btn">Copy</button>
+              </div>
+              <pre class="json-body" id="json-body"></pre>
+            </div>
+            
+          </div>
+          <div class="result-error" id="result-error" style="display:none;">
+            <div class="error-icon">⚠</div>
+            <p class="error-title">Connection Error</p>
+            <p class="error-msg" id="error-msg">Could not reach the API. The server may be sleeping (Render free tier). Try again in 30s.</p>
+            <button class="btn-retry" id="retry-btn">Retry</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIMENTS SECTION -->
+  <section class="experiments-section" id="experiments">
+    <div class="container">
+      <div class="section-header">
+        <div class="exp-header-row">
+          <div>
+            <h2 class="section-title">Latest Experiment</h2>
+            <p class="section-sub">Reads from the newest artifacts run — metrics, params &amp; evaluation plots</p>
+          </div>
+          <button class="btn-refresh" id="exp-refresh-btn">
+            <span class="refresh-icon" id="refresh-icon">↻</span>
+            Refresh
+          </button>
+        </div>
+        <div class="run-meta" id="run-meta" style="display:none;">
+          <span class="run-meta-item">
+            <span class="run-meta-label">Run</span>
+            <span class="run-meta-val" id="run-id-val">—</span>
+          </span>
+          <span class="run-meta-sep">·</span>
+          <span class="run-meta-item">
+            <span class="run-meta-label">Folder</span>
+            <span class="run-meta-val mono" id="run-folder-val">—</span>
+          </span>
+          <span class="run-meta-sep">·</span>
+          <span class="run-meta-item">
+            <span class="run-meta-label">Status</span>
+            <span class="run-meta-val accent">FINISHED</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Loading skeleton -->
+      <div class="exp-skeleton" id="exp-skeleton">
+        <div class="skel-metrics">
+          <div class="skel-card"></div><div class="skel-card"></div>
+          <div class="skel-card"></div><div class="skel-card"></div>
+          <div class="skel-card"></div><div class="skel-card"></div>
+        </div>
+        <div class="skel-plots">
+          <div class="skel-plot"></div>
+          <div class="skel-plot"></div>
+          <div class="skel-plot"></div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="exp-error" id="exp-error" style="display:none;">
+        <div class="exp-error-inner">
+          <span class="exp-error-icon">⚠</span>
+          <div>
+            <p class="exp-error-title">Could not load experiment data</p>
+            <p class="exp-error-msg" id="exp-error-msg">Backend must expose <code>GET /artifacts/</code>. Check that the server is running and CORS is enabled.</p>
+          </div>
+          <button class="btn-retry-exp" id="exp-retry-btn">Retry</button>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="exp-content" id="exp-content" style="display:none;">
+
+        <!-- METRICS -->
+        <div class="exp-block">
+          <div class="exp-block-header">
+            <span class="exp-block-icon">📈</span>
+            <h3 class="exp-block-title">Performance Metrics</h3>
+            <span class="exp-block-badge" id="metrics-run-label">Latest Run</span>
+          </div>
+          <div class="metrics-grid" id="metrics-grid"></div>
+        </div>
+
+        <!-- PARAMS
+        <div class="exp-block">
+          <div class="exp-block-header" id="params-toggle" style="cursor:pointer;" title="Click to expand">
+            <span class="exp-block-icon">⚙️</span>
+            <h3 class="exp-block-title">Model Parameters</h3>
+            <span class="exp-block-badge">XGBoost Config</span>
+            <span class="params-chevron" id="params-chevron">▾</span>
+          </div>
+          <div class="params-body" id="params-body">
+            <div class="params-grid" id="params-grid"></div>
+          </div>
+        </div> -->
+
+        <!-- PLOTS -->
+        <div class="exp-block">
+          <div class="exp-block-header">
+            <span class="exp-block-icon">📊</span>
+            <h3 class="exp-block-title">Evaluation Plots</h3>
+            <span class="exp-block-badge">Latest Artifacts Folder</span>
+          </div>
+          <div class="plots-grid">
+
+            <div class="plot-card">
+              <div class="plot-header">
+                <span class="plot-title">ROC-AUC Curve</span>
+                <a class="plot-open-btn" id="auc-open" href="#" target="_blank" title="Open full size">↗</a>
+              </div>
+              <div class="plot-img-wrap">
+                <div class="plot-skeleton" id="auc-skel"></div>
+                <img class="plot-img" id="auc-img" src="" alt="AUC Curve" style="display:none;" />
+                <div class="plot-err" id="auc-err" style="display:none;">Failed to load image</div>
+              </div>
+            </div>
+
+            <div class="plot-card">
+              <div class="plot-header">
+                <span class="plot-title">Confusion Matrix</span>
+                <a class="plot-open-btn" id="cm-open" href="#" target="_blank" title="Open full size">↗</a>
+              </div>
+              <div class="plot-img-wrap">
+                <div class="plot-skeleton" id="cm-skel"></div>
+                <img class="plot-img" id="cm-img" src="" alt="Confusion Matrix" style="display:none;" />
+                <div class="plot-err" id="cm-err" style="display:none;">Failed to load image</div>
+              </div>
+            </div>
+
+            <div class="plot-card">
+              <div class="plot-header">
+                <span class="plot-title">Precision-Recall Curve</span>
+                <a class="plot-open-btn" id="pr-open" href="#" target="_blank" title="Open full size">↗</a>
+              </div>
+              <div class="plot-img-wrap">
+                <div class="plot-skeleton" id="pr-skel"></div>
+                <img class="plot-img" id="pr-img" src="" alt="PR-AUC Curve" style="display:none;" />
+                <div class="plot-err" id="pr-err" style="display:none;">Failed to load image</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-sub">End-to-end ML pipeline from raw data to production inference</p>
+      </div>
+      <div class="pipeline">
+        <div class="pipeline-step">
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <h3 class="step-title">Data Ingestion</h3>
+            <p class="step-desc">1.27M transactions with extreme class imbalance (0.1% fraud). DVC-versioned raw data pipeline.</p>
+          </div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-step">
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <h3 class="step-title">Feature Engineering</h3>
+            <p class="step-desc">Balance error features, one-hot encoding, StandardScaler. Stratified 80/20 split to maintain class distribution.</p>
+          </div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-step">
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <h3 class="step-title">XGBoost + Optuna</h3>
+            <p class="step-desc">Bayesian hyperparameter search. scale_pos_weight=7.45 to handle imbalance. CUDA-accelerated training.</p>
+          </div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-step">
+          <div class="step-num">04</div>
+          <div class="step-body">
+            <h3 class="step-title">Threshold Optimization</h3>
+            <p class="step-desc">Precision ≥65% constraint. Maximize recall within constraint. Result: 99.76% recall, PR-AUC 98.77%.</p>
+          </div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-step">
+          <div class="step-num">05</div>
+          <div class="step-body">
+            <h3 class="step-title">FastAPI Serving</h3>
+            <p class="step-desc">Singleton model loading. Pydantic validation. Sub-100ms inference. Deployed on Render.</p>
+          </div>
+        </div>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-card"><span class="tech-icon">🤖</span><span class="tech-name">XGBoost</span><span class="tech-role">ML Model</span></div>
+        <div class="tech-card"><span class="tech-icon">⚗️</span><span class="tech-name">Optuna</span><span class="tech-role">HPO</span></div>
+        <div class="tech-card"><span class="tech-icon">📊</span><span class="tech-name">MLflow</span><span class="tech-role">Experiment Tracking</span></div>
+        <div class="tech-card"><span class="tech-icon">📦</span><span class="tech-name">DVC</span><span class="tech-role">Data Versioning</span></div>
+        <div class="tech-card"><span class="tech-icon">⚡</span><span class="tech-name">FastAPI</span><span class="tech-role">Backend API</span></div>
+        <div class="tech-card"><span class="tech-icon">🐳</span><span class="tech-name">Docker</span><span class="tech-role">Containerization</span></div>
+        <div class="tech-card"><span class="tech-icon">🔬</span><span class="tech-name">scikit-learn</span><span class="tech-role">Preprocessing</span></div>
+        <div class="tech-card"><span class="tech-icon">🚀</span><span class="tech-name">CI/CD</span><span class="tech-role">DevOps</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <span class="footer-logo">⬡ FraudDetect</span>
+          <span class="footer-sub">Built by Aryan Shah</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://frauddetect-backend-jpgf.onrender.com/docs" target="_blank">API Docs</a>
+          <a href="https://github.com/aryanshah2109/FraudDetect" target="_blank">GitHub</a>
+          <a href="mailto:aryanrshah2109@gmail.com">Contact</a>
+        </div>
+        <div class="footer-right">
+          <span class="status-dot"></span>
+          <span class="status-text">API Live</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../JS/env.js"></script>
+  <script src="../JS/app.js"></script>
+  <script src="../JS/experiments.js"></script>
+</body>
+</html>
