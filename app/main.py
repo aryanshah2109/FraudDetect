@@ -49,6 +49,9 @@ def home():
     return {"message": "FraudDetect - A High Level Fraud Detection System"}
 
 
+artifacts_path = BASE_DIR / "artifacts"
+artifacts_path.mkdir(exist_ok=True)  
 app.mount("/artifacts/files", StaticFiles(directory=BASE_DIR / "artifacts"), name="artifact_files")
+
 app.include_router(detect_router)
 app.include_router(artifacts_router)
