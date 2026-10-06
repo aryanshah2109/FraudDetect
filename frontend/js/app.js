@@ -133,7 +133,7 @@ function showResult(data) {
     <div class="metric-item">
       <div class="metric-key">Prediction</div>
       <div class="metric-val" style="color:${isFraud ? 'var(--danger)' : 'var(--accent)'}">
-        ${data.prediction_label || (isFraud ? 'Fraud' : 'Legitimate')}
+        ${data.prediction_label || (isFraud ? 'Fraud' : 'Not Fraud')}
       </div>
     </div>
     <div class="metric-item">
@@ -169,15 +169,30 @@ function showResult(data) {
 
 // ─── Detection call ───────────────────────────────────────
 async function runDetection() {
-  if (!amount.value) { shakeField(amount); amount.focus(); return; }
+  const fields = [amount, oldBalOrig, newBalOrig, oldBalDest, newBalDest];
+  const missingField = fields.find((field) => field.value.trim() === '');
+  if (missingField) {
+    shakeField(missingField);
+    missingField.focus();
+    showError('Please enter the amount and all sender and receiver balances.');
+    return;
+  }
+
+  const invalidField = fields.find((field) => !Number.isFinite(Number(field.value)) || Number(field.value) < 0);
+  if (invalidField) {
+    shakeField(invalidField);
+    invalidField.focus();
+    showError('Amounts and balances must be non-negative numbers.');
+    return;
+  }
 
   const payload = {
     type:           TYPE_API_MAP[txnType.value] || txnType.value,
-    amount:         parseFloat(amount.value)     || 0,
-    oldbalanceOrg:  parseFloat(oldBalOrig.value) || 0,
-    newbalanceOrig: parseFloat(newBalOrig.value) || 0,
-    oldbalanceDest: parseFloat(oldBalDest.value) || 0,
-    newbalanceDest: parseFloat(newBalDest.value) || 0,
+    amount:         Number(amount.value),
+    oldbalanceOrg:  Number(oldBalOrig.value),
+    newbalanceOrig: Number(newBalOrig.value),
+    oldbalanceDest: Number(oldBalDest.value),
+    newbalanceDest: Number(newBalDest.value),
   };
 
   detectBtn.classList.add('loading');

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FraudDetect — Credit Card Fraud Detection</title>
+  <title>FraudDetect — Mobile-Money Fraud Detection</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -41,16 +41,16 @@
         Live Model — Production Ready
       </div>
       <h1 class="hero-title">
-        Detect Credit Card<br />
+        Detect Mobile-Money<br />
         <span class="hero-accent">Fraud in Real-Time</span>
       </h1>
       <p class="hero-sub">
-        XGBoost · 99.76% Recall · PR-AUC 98.77% · Sub-100ms Inference
+        XGBoost · 99.76% Recall · PR-AUC 98.77% · FastAPI Inference
       </p>
       <div class="stats-row">
         <div class="stat-item">
-          <span class="stat-value">1.27M</span>
-          <span class="stat-label">Transactions Trained</span>
+          <span class="stat-value">6.36M</span>
+          <span class="stat-label">Dataset Rows</span>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
@@ -99,7 +99,7 @@
             <label class="form-label" for="amount">Transaction Amount</label>
             <div class="input-wrapper">
               <span class="input-prefix">₹</span>
-              <input type="number" id="amount" class="form-input prefix-input" placeholder="100000" min="0" step="0.01" />
+              <input type="number" id="amount" class="form-input prefix-input" placeholder="100000" min="0" step="0.01" required />
             </div>
           </div>
           <div class="form-row">
@@ -107,14 +107,14 @@
               <label class="form-label" for="old-bal-orig">Sender Balance (Before)</label>
               <div class="input-wrapper">
                 <span class="input-prefix">₹</span>
-                <input type="number" id="old-bal-orig" class="form-input prefix-input" placeholder="50000" min="0" step="0.01" />
+                <input type="number" id="old-bal-orig" class="form-input prefix-input" placeholder="50000" min="0" step="0.01" required />
               </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="new-bal-orig">Sender Balance (After)</label>
               <div class="input-wrapper">
                 <span class="input-prefix">₹</span>
-                <input type="number" id="new-bal-orig" class="form-input prefix-input" placeholder="0" min="0" step="0.01" />
+                <input type="number" id="new-bal-orig" class="form-input prefix-input" placeholder="0" min="0" step="0.01" required />
               </div>
             </div>
           </div>
@@ -123,14 +123,14 @@
               <label class="form-label" for="old-bal-dest">Receiver Balance (Before)</label>
               <div class="input-wrapper">
                 <span class="input-prefix">₹</span>
-                <input type="number" id="old-bal-dest" class="form-input prefix-input" placeholder="10000" min="0" step="0.01" />
+                <input type="number" id="old-bal-dest" class="form-input prefix-input" placeholder="10000" min="0" step="0.01" required />
               </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="new-bal-dest">Receiver Balance (After)</label>
               <div class="input-wrapper">
                 <span class="input-prefix">₹</span>
-                <input type="number" id="new-bal-dest" class="form-input prefix-input" placeholder="110000" min="0" step="0.01" />
+                <input type="number" id="new-bal-dest" class="form-input prefix-input" placeholder="110000" min="0" step="0.01" required />
               </div>
             </div>
           </div>
@@ -355,7 +355,7 @@
           <div class="step-num">01</div>
           <div class="step-body">
             <h3 class="step-title">Data Ingestion</h3>
-            <p class="step-desc">1.27M transactions with extreme class imbalance (0.1% fraud). DVC-versioned raw data pipeline.</p>
+            <p class="step-desc">PaySim’s 6.36M synthetic mobile-money transactions with extreme class imbalance (0.129% fraud). DVC-versioned raw data pipeline.</p>
           </div>
         </div>
         <div class="pipeline-arrow">→</div>
@@ -370,8 +370,8 @@
         <div class="pipeline-step">
           <div class="step-num">03</div>
           <div class="step-body">
-            <h3 class="step-title">XGBoost + Optuna</h3>
-            <p class="step-desc">Bayesian hyperparameter search. scale_pos_weight=7.45 to handle imbalance. CUDA-accelerated training.</p>
+            <h3 class="step-title">XGBoost Training</h3>
+            <p class="step-desc">Cost-sensitive XGBoost with scale_pos_weight=7.45 to handle imbalance. CUDA-accelerated training.</p>
           </div>
         </div>
         <div class="pipeline-arrow">→</div>
@@ -387,13 +387,13 @@
           <div class="step-num">05</div>
           <div class="step-body">
             <h3 class="step-title">FastAPI Serving</h3>
-            <p class="step-desc">Singleton model loading. Pydantic validation. Sub-100ms inference. Deployed on Render.</p>
+            <p class="step-desc">Singleton model loading and Pydantic validation. The FastAPI service is deployed on Render.</p>
           </div>
         </div>
       </div>
       <div class="tech-grid">
         <div class="tech-card"><span class="tech-icon">🤖</span><span class="tech-name">XGBoost</span><span class="tech-role">ML Model</span></div>
-        <div class="tech-card"><span class="tech-icon">⚗️</span><span class="tech-name">Optuna</span><span class="tech-role">HPO</span></div>
+        <div class="tech-card"><span class="tech-icon">🎯</span><span class="tech-name">Thresholding</span><span class="tech-role">Recall Optimization</span></div>
         <div class="tech-card"><span class="tech-icon">📊</span><span class="tech-name">MLflow</span><span class="tech-role">Experiment Tracking</span></div>
         <div class="tech-card"><span class="tech-icon">📦</span><span class="tech-name">DVC</span><span class="tech-role">Data Versioning</span></div>
         <div class="tech-card"><span class="tech-icon">⚡</span><span class="tech-name">FastAPI</span><span class="tech-role">Backend API</span></div>
