@@ -38,14 +38,14 @@
     <div class="hero-inner">
       <div class="hero-badge">
         <span class="badge-dot"></span>
-        Live Model — Production Ready
+        Live Model — Deployed on Render
       </div>
       <h1 class="hero-title">
         Detect Mobile-Money<br />
         <span class="hero-accent">Fraud in Real-Time</span>
       </h1>
       <p class="hero-sub">
-        XGBoost · 99.76% Recall · PR-AUC 98.77% · FastAPI Inference
+        XGBoost · 99.76% Recall · ~65% Precision · PR-AUC 98.77% · FastAPI Inference
       </p>
       <div class="stats-row">
         <div class="stat-item">
@@ -54,8 +54,8 @@
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <span class="stat-value">99.93%</span>
-          <span class="stat-label">Accuracy</span>
+          <span class="stat-value">64.8%</span>
+          <span class="stat-label">Precision</span>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
@@ -66,6 +66,7 @@
         <div class="stat-item">
           <span class="stat-value">&lt;100ms</span>
           <span class="stat-label">Inference Latency</span>
+          <small>Inference only, excludes free-tier cold start</small>
         </div>
       </div>
     </div>
@@ -379,7 +380,7 @@
           <div class="step-num">04</div>
           <div class="step-body">
             <h3 class="step-title">Threshold Optimization</h3>
-            <p class="step-desc">Precision ≥65% constraint. Maximize recall within constraint. Result: 99.76% recall, PR-AUC 98.77%.</p>
+            <p class="step-desc">Precision ≥65% constraint. Maximize recall within constraint. Result: 99.76% recall, PR-AUC 98.77%. False alarms are the trade-off: precision is held at about 65%.</p>
           </div>
         </div>
         <div class="pipeline-arrow">→</div>
